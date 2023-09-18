@@ -1,14 +1,7 @@
 import * as React from 'react';
 import { Link } from "react-router-dom";
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
-import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import Typography from '@mui/material/Typography';
+import { Avatar, Box, Button, CardContent, CardActions, Grid, TextField, Typography } from '@mui/material';
+import { Login } from '@mui/icons-material';
 
 export default function SignIn() {
   const handleSubmit = (event) => {
@@ -22,54 +15,44 @@ export default function SignIn() {
 
   return (
     <>
-      <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-        <LockOutlinedIcon />
-      </Avatar>
-      <Typography component="h1" variant="h5">
-        Sign in
-      </Typography>
-      <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-        <TextField
-          margin="normal"
-          required
-          fullWidth
-          id="email"
-          label="Email Address"
-          name="email"
-          autoComplete="email"
-          autoFocus
-        />
-        <TextField
-          margin="normal"
-          required
-          fullWidth
-          name="password"
-          label="Password"
-          type="password"
-          id="password"
-          autoComplete="current-password"
-        />
-        <FormControlLabel
-          control={<Checkbox value="remember" color="primary" />}
-          label="Remember me"
-        />
-        <Button
-          type="submit"
-          fullWidth
-          variant="contained"
-          sx={{ mt: 3, mb: 2 }}
-        >
-          Sign In
-        </Button>
+      <CardContent align='center'>
+        <Avatar sx={{ m: 1, bgcolor: 'secondary.primary' }}>
+          <Login />
+        </Avatar>
+        <Typography component="h1" variant="h5">
+          Iniciar Sesión
+        </Typography>
+        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="employeeId"
+            label="# de Empleado"
+            name="employeeId"
+            autoComplete="employeeId"
+            autoFocus
+          />
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3, mb: 2 }}
+          >
+            Ingresar
+          </Button>
+        </Box>
+      </CardContent>
+      <CardActions>
         <Grid container>
           <Grid item xs>
-            <Button size="small"><Link to={"/forgot"}>{"Forgot password?"}</Link></Button>
+            <Button size="small"><Link to={"/forgot"}>{"Olvide mi usuario"}</Link></Button>
           </Grid>
           <Grid item>
-            <Button size="small"><Link to={"/signup"}>{"Don't have an account? Sign Up"}</Link></Button>
+            <Button size="small"><Link to={"/signup"}>{"Registrarse"}</Link></Button>
           </Grid>
         </Grid>
-      </Box>
+      </CardActions>
     </>
   );
 }

@@ -4,23 +4,28 @@ import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Grid from '@mui/material/Grid';
 
+import './App.css';
 import router from './routes/routes';
 import Footer from './Components/Footer';
 
 function App() {
 
     return (
-        <Box sx={{ flexGrow: 1 }}>
-            <Grid container direction="column" spacing={5} justifyContent="center" alignItems="center">
-                <Grid item xs={12}>
-                    <Card sx={{ minWidth: 500 }}>
+        <Box
+            sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                minHeight: '100vh',
+            }}
+        >
+            <Grid container spacing={10} justifyContent="center" alignItems="center">
+                <Grid item xs={12} lg={6}>
+                    <Card sx={{ minWidth: 500, marginTop: '20%' }}>
                         <RouterProvider router={router} />
                     </Card>
                 </Grid>
-                <Grid item xs={12}>
-                    <Footer />
-                </Grid>
             </Grid>
+            <Footer />
         </Box>
     )
 }

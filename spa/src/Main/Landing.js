@@ -19,7 +19,7 @@ export default function BasicCard() {
     <>
       <CardContent>
         <Typography variant="h1">
-          ¡Bienvenidos
+          ¡Bienvenidos...
         </Typography>
         <Typography variant="h3" gutterBottom>
           al reto 75 días!

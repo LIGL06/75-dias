@@ -1,11 +1,9 @@
 import * as React from 'react';
-import { Link } from "react-router-dom";
 import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
-import Button from '@mui/material/Button';
+import CardActions from '@mui/material/CardActions';
 import Typography from '@mui/material/Typography';
+import LandingActions from './LandingActions';
 
 const bull = (
   <Box
@@ -18,27 +16,33 @@ const bull = (
 
 export default function BasicCard() {
   return (
-    <Card sx={{ minWidth: 275 }}>
+    <>
       <CardContent>
-        <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-          Word of the Day
+        <Typography variant="h1">
+          ¡Bienvenidos
         </Typography>
+        <Typography variant="h3" gutterBottom>
+          al reto 75 días!
+        </Typography>
+        <br />
         <Typography variant="h5" component="div">
-          be{bull}nev{bull}o{bull}lent
+          bie{bull}nes{bull}tar{bull}
         </Typography>
-        <Typography sx={{ mb: 1.5 }} color="text.secondary">
-          adjective
+        <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+          nombre masculino
         </Typography>
-        <Typography variant="body2">
-          well meaning and kindly.
+        <Typography variant="body1" gutterBottom>
+          Estado de la persona cuyas condiciones físicas y mentales le proporcionan un sentimiento de satisfacción y tranquilidad.
           <br />
-          {'"a benevolent smile"'}
         </Typography>
+        <Typography variant="body2" color="text.secondary" gutterBottom>
+          "con este reto vas a notar una sensación de bienestar general en todo tu cuerpo"
+        </Typography>
+        <br />
       </CardContent>
       <CardActions>
-        <Button size="small"><Link to={"signin"}>Iniciar Sesión</Link></Button>
-        <Button size="small"><Link to={"signup"}>Registrarse</Link></Button>
+        <LandingActions />
       </CardActions>
-    </Card>
+    </>
   );
 }

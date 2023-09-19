@@ -1,17 +1,30 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import { Link } from "react-router-dom";
 import { Avatar, Box, Button, CardContent, CardActions, Grid, TextField, Typography } from '@mui/material';
 import { Login } from '@mui/icons-material';
 
 export default function SignIn() {
+  const [employeeId, setEmployeeId] = useState({});
+
   const handleSubmit = (event) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+    const formData = new FormData();
+    formData.append('employeeId', employeeId);
+    handlePost(formData);
   };
+
+  const handlePost = async (formData) => {
+    await fetch('https://www.reto75dias.com.mx/api/methods/post-signin.php', {
+      method: 'POST',
+      headers: new Headers({
+        'Accept': 'application/json',
+        'x-api-key': formData,
+        'User-Agent': 'Reto-75-dias-v1',
+      }),
+      body: formData
+    })
+      .then((res) => console.log(res));
+  }
 
   return (
     <>
@@ -31,7 +44,7 @@ export default function SignIn() {
             label="# de Empleado"
             name="employeeId"
             autoComplete="employeeId"
-            autoFocus
+            onChange={e => setEmployeeId(e.target.value)}
           />
           <Button
             type="submit"

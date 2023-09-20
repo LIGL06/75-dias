@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { Link } from "react-router-dom";
+import { useNavigate, Link } from 'react-router-dom';
 import { Avatar, Box, Button, CardContent, CardActions, Grid, TextField, Typography } from '@mui/material';
 import { Login } from '@mui/icons-material';
 
 export default function SignIn() {
+  const history = useNavigate();
+
   const [employeeId, setEmployeeId] = useState({});
 
   const handleSubmit = (event) => {
@@ -23,7 +25,14 @@ export default function SignIn() {
       }),
       body: formData
     })
-      .then((res) => console.log(res));
+      .then(res=> res.json())
+      .then(data => {
+        if (data?.id) {
+          localStorage.setItem('employeeId', data.id)
+          history('/dashboard');
+        }
+        console.log({ data })
+      });
   }
 
   return (
@@ -45,12 +54,14 @@ export default function SignIn() {
             name="employeeId"
             autoComplete="employeeId"
             onChange={e => setEmployeeId(e.target.value)}
+            error={employeeId === ''}
           />
           <Button
             type="submit"
             fullWidth
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
+            disabled={employeeId === ''}
           >
             Ingresar
           </Button>
@@ -60,6 +71,9 @@ export default function SignIn() {
         <Grid container>
           <Grid item xs>
             <Button size="small"><Link to={"/forgot"}>{"Olvide mi usuario"}</Link></Button>
+          </Grid>
+          <Grid item xs>
+            <Button size="small"><Link to={"/dashboard"}>{"D"}</Link></Button>
           </Grid>
           <Grid item>
             <Button size="small"><Link to={"/signup"}>{"Registrarse"}</Link></Button>

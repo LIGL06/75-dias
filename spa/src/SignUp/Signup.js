@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Avatar,
@@ -25,10 +25,19 @@ import {
   Send as SendIcon,
   PersonAddAlt as PersonAddAltIcon,
 } from '@mui/icons-material';
-import { locations, identities } from '../SignUp/constants';
+import { locations, identities } from './constants';
 
 export default function SignUp() {
   const [form, setForm] = useState({});
+  const [valid, setValid] = useState(false);
+
+  useEffect(()=> {
+    const isValid = !!((form.age && form.email) &&
+    (form.employeeId && form.fullName) &&
+    (form.height && form.identity) &&
+    (form.phone && form.weigth));
+    setValid(isValid)
+  }, [form])
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -49,7 +58,8 @@ export default function SignUp() {
       }),
       body: formData
     })
-      .then((res) => console.log(res));
+    .then(res=> res.json())
+    .then(data => console.log({ data }))
   }
 
   return (
@@ -68,7 +78,7 @@ export default function SignUp() {
                 required
                 fullWidth
                 id='fullName'
-                label='Nombre Completo'
+                label='Nombre Completo (sin acentuación)'
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position='start'>
@@ -77,6 +87,7 @@ export default function SignUp() {
                   ),
                 }}
                 onChange={e => setForm({ ...form, fullName: e.target.value })}
+                error={!form?.fullName?.match(/^(([A-Za-z]+[\-\']?)*([A-Za-z]+)?\s)+([A-Za-z]+[\-\']?)*([A-Za-z]+)?$/)}
                 variant='standard'
               />
             </Grid>
@@ -94,6 +105,7 @@ export default function SignUp() {
                   ),
                 }}
                 onChange={e => setForm({ ...form, employeeId: e.target.value })}
+                error={!form?.employeeId?.match(/^\d+$/)}
                 variant='standard'
               />
             </Grid>
@@ -111,6 +123,7 @@ export default function SignUp() {
                   ),
                 }}
                 onChange={e => setForm({ ...form, phone: e.target.value })}
+                error={!form?.phone?.match(/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im)}
                 variant='standard'
               />
             </Grid>
@@ -129,6 +142,7 @@ export default function SignUp() {
                   ),
                 }}
                 onChange={e => setForm({ ...form, email: e.target.value })}
+                error={!form?.email?.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)}
                 variant='standard'
               />
             </Grid>
@@ -148,6 +162,7 @@ export default function SignUp() {
                   ),
                 }}
                 onChange={e => setForm({ ...form, identity: e.target.value })}
+                error={form.identity === ''}
                 variant='standard'
               >
                 {identities.map((option) => (
@@ -173,6 +188,7 @@ export default function SignUp() {
                   ),
                 }}
                 onChange={e => setForm({ ...form, location: e.target.value })}
+                error={form.location === ''}
                 variant='standard'
               >
                 {locations.map((option) => (
@@ -191,6 +207,11 @@ export default function SignUp() {
                 defaultValue={18}
                 id='age'
                 label='Edad (solo número)'
+                inputProps={{
+                  step: 1,
+                  min: 18,
+                  max: 100
+                }}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position='start'>
@@ -199,6 +220,7 @@ export default function SignUp() {
                   ),
                 }}
                 onChange={e => setForm({ ...form, age: e.target.value })}
+                error={(form.age <18 || form.age >100)}
                 variant='standard'
               />
             </Grid>
@@ -208,7 +230,13 @@ export default function SignUp() {
                 required
                 fullWidth
                 id='height'
+                type="number"
                 label='Estatura (mts)'
+                inputProps={{
+                  step: 0.05,
+                  min: 1,
+                  max: 2
+                }}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position='start'>
@@ -216,7 +244,8 @@ export default function SignUp() {
                     </InputAdornment>
                   ),
                 }}
-                onChange={e => setForm({ ...form, height: e.target.value })}
+                onChange={e => setForm({ ...form, height: parseFloat(e.target.value).toFixed(2) })}
+                error={!(form.height >=1.00 && form.height <=2.00)}
                 variant='standard'
               />
             </Grid>
@@ -228,6 +257,11 @@ export default function SignUp() {
                 type='number'
                 id='weigth'
                 label='Peso (kgs)'
+                inputProps={{
+                  step: 1,
+                  min: 10,
+                  max: 150
+                }}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position='start'>
@@ -235,7 +269,8 @@ export default function SignUp() {
                     </InputAdornment>
                   ),
                 }}
-                onChange={e => setForm({ ...form, weight: e.target.value })}
+                onChange={e => setForm({ ...form, weigth: e.target.value })}
+                error={!(form.weigth >=10.00 && form.weigth <=150.00)}
                 variant='standard'
               />
             </Grid>
@@ -249,6 +284,7 @@ export default function SignUp() {
                 variant='contained'
                 endIcon={<SendIcon />}
                 sx={{ mt: 3, mb: 2 }}
+                disabled={!valid}
               >
                 Enviar
               </Button>

@@ -21,7 +21,7 @@ const headers = new Headers({
     'User-Agent': 'Reto-75-dias-v1',
 })
 const mockedCurrentDay = 7;
-const mockedEntries = { "days": { "today": "2023-09-20", "yesterday": "2023-09-19", "prev48Hrs": "2023-09-18" }, "fromTy": { "id": "3", "employee_id": "5", "question_id": "1", "day": "20", "createdAt": "2023-09-20" }, "fromYy": { "id": "1", "employee_id": "5", "question_id": "1", "day": "19", "createdAt": "2023-09-19" }, "fromPYy": { } };
+const mockedEntries = { "days": { "today": "2023-09-20", "yesterday": "2023-09-19", "prev48Hrs": "2023-09-18" }, "fromTy": { "id": "3", "employee_id": "5", "question_id": "1", "day": "20", "createdAt": "2023-09-20" }, "fromYy": { "id": "1", "employee_id": "5", "question_id": "1", "day": "19", "createdAt": "2023-09-19" }, "fromPYy": { "id": "1", "employee_id": "5", "question_id": "1", "day": "19", "createdAt": "2023-09-19" } };
 
 function Form() {
 
@@ -51,16 +51,16 @@ function Form() {
 
     useEffect(() => {
         let acum = 0;
-        const fromYy = Object.keys(entries.fromYy).length;
-        const fromPYy = Object.keys(entries.fromPYy).length;
-
-        if (entries.fromYy && !fromYy) {
+        if (entries.fromYy && !Object.keys(entries.fromYy).length) {
             acum = acum + 1;
         }
-        if (entries.fromPYy && !fromPYy) {
+        if (entries.fromPYy && !Object.keys(entries.fromPYy).length) {
             acum = acum + 1;
         }
         setPendingEntries(acum);
+        if (acum === 0) {
+            setActiveStep({ ...activeStep, completed: true })
+        }
         // TODO: Si hay 0 pendientes brincar al paso Actual, Sino mostrar los cuestionarios por cada día pendiente
     }, [entries]);
 
@@ -76,12 +76,16 @@ function Form() {
         setActiveStep({ number: activeStep.number - 1 });
     };
 
+    const handleCompletion = (completed) => {
+        setActiveStep({ ...activeStep, completed });
+    }
+
     function getStepContent(step) {
         switch (step.number) {
             case 0:
-                return <PreviousForm completed={step.completed} pendingEntries={pendingEntries} />;
+                return <PreviousForm pendingEntries={pendingEntries}  />;
             case 1:
-                return <CheckForm completed={step.completed} />;
+                return <CheckForm markCompleted={handleCompletion} day={currentDay} />;
             case 2:
                 return <HistoryForm completed={step.completed} />;
             default:

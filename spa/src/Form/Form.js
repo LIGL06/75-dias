@@ -14,44 +14,80 @@ import CheckForm from './CheckForm';
 import HistoryForm from './HistoryForm';
 
 const steps = ['Pendientes', 'Actual', 'Avance'];
-
-function getStepContent(step) {
-    switch (step.number) {
-        case 0:
-            return <PreviousForm completed={step.completed} />;
-        case 1:
-            return <CheckForm completed={step.completed} />;
-        case 2:
-            return <HistoryForm completed={step.completed} />;
-        default:
-            throw new Error('Unknown step');
-    }
-}
+const employeeId = localStorage.getItem('employeeId');
+const headers = new Headers({
+    'Access-Control-Allow-Origin': '*',
+    'Accept': 'application/json',
+    'User-Agent': 'Reto-75-dias-v1',
+})
+const mockedCurrentDay = 7;
+const mockedEntries = { "days": { "today": "2023-09-20", "yesterday": "2023-09-19", "prev48Hrs": "2023-09-18" }, "fromTy": { "id": "3", "employee_id": "5", "question_id": "1", "day": "20", "createdAt": "2023-09-20" }, "fromYy": { "id": "1", "employee_id": "5", "question_id": "1", "day": "19", "createdAt": "2023-09-19" }, "fromPYy": { } };
 
 function Form() {
 
     const [activeStep, setActiveStep] = useState({ number: 0, completed: false });
+    const [entries, setEntries] = useState({});
+    const [pendingEntries, setPendingEntries] = useState(0);
     const [currentDay, setCurrentDay] = useState(0);
 
     useEffect(() => {
         fetch('https://www.reto75dias.com.mx/api/methods/get-current-day.php', {
             method: 'GET',
-            headers: new Headers({
-                'Accept': 'application/json',
-                'User-Agent': 'Reto-75-dias-v1',
-            })
+            headers,
         })
             .then(res => res.json())
-            .then(data => setCurrentDay(data));
+            .then(data => setCurrentDay(data))
+            .catch(() => setCurrentDay(mockedCurrentDay)); // TODO: REMOVE THIS
+        fetch('https://www.reto75dias.com.mx/api/methods/get-employee-entries.php?' + new URLSearchParams({
+            employeeId
+        }), {
+            method: 'GET',
+            headers,
+        })
+            .then(res => res.json())
+            .then(data => setEntries(data))
+            .catch(() => setEntries(mockedEntries));  // TODO: REMOVE THIS
     }, [])
 
+    useEffect(() => {
+        let acum = 0;
+        const fromYy = Object.keys(entries.fromYy).length;
+        const fromPYy = Object.keys(entries.fromPYy).length;
+
+        if (entries.fromYy && !fromYy) {
+            acum = acum + 1;
+        }
+        if (entries.fromPYy && !fromPYy) {
+            acum = acum + 1;
+        }
+        setPendingEntries(acum);
+        // TODO: Si hay 0 pendientes brincar al paso Actual, Sino mostrar los cuestionarios por cada día pendiente
+    }, [entries]);
+
     const handleNext = () => {
-        setActiveStep({ number: activeStep.number + 1 });
+        if (activeStep.completed) {
+            setActiveStep({ number: activeStep.number + 1 });
+        } else {
+            alert('Completar formulario primero!');
+        }
     };
 
     const handleBack = () => {
         setActiveStep({ number: activeStep.number - 1 });
     };
+
+    function getStepContent(step) {
+        switch (step.number) {
+            case 0:
+                return <PreviousForm completed={step.completed} pendingEntries={pendingEntries} />;
+            case 1:
+                return <CheckForm completed={step.completed} />;
+            case 2:
+                return <HistoryForm completed={step.completed} />;
+            default:
+                throw new Error('Unknown step');
+        }
+    }
 
     return (
         <>
@@ -90,6 +126,7 @@ function Form() {
                                     variant="contained"
                                     onClick={handleNext}
                                     sx={{ mt: 3, ml: 1 }}
+                                    disabled={!activeStep.completed}
                                 >
                                     {activeStep === steps.length - 1 ? 'Completar' : 'Siguiente'}
                                 </Button>

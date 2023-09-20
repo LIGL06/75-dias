@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { Grid, Typography } from '@mui/material'
 
-function CheckForm({ completed }) {
-    console.log({ completed })
+function CheckForm({ completed, day }) {
 
     return (
         <>

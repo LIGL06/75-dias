@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once '../config/db.php';
+header("Access-Control-Allow-Origin: *");
 header("Content-type: application/json; charset=utf-8");
 header("Access-Control-Allow-Methods: POST");
 $request_headers = getallheaders();
@@ -27,6 +28,7 @@ try {
         $user->weight = $_POST['weight'];
         $id = R::store($user);
         $user->id = $id;
+        $_SESSION['employeeId'] = $user->employeeId;
         echo json_encode($user);
         exit();
     } else {

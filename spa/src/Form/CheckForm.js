@@ -9,13 +9,8 @@ import {
     FormHelperText,
     Checkbox
 } from '@mui/material';
-
-const headers = new Headers({
-    'Access-Control-Allow-Origin': '*',
-    'Accept': 'application/json',
-    'User-Agent': 'Reto-75-dias-v1',
-})
-const mockedQuestions = { "1": { "content": "Com\u00ed saludable de acuerdo a mi plan", "id": "1" }, "2": { "content": "Tom\u00e9 8 vasos de agua", "id": "2" }, "3": { "content": "Me ejercit\u00e9\/camin\u00e9 al menos 5 mil pasos", "id": "3" }, "4": { "content": "Medit\u00e9 al menos 5 min en el d\u00eda", "id": "4" }, "5": { "content": "Le\u00ed 10 p\u00e1ginas o m\u00e1s de mi libro", "id": "5" }, "6": { "content": "Fuí optimista y proactiv@ durante el d\u00eda", "id": "6" } };
+import { headers } from '../constants/constants';
+import data from '../mocks/mockedData'; // TODO: REMOVE THIS
 
 function CheckForm({ markCompleted, day, title = 'hoy' }) {
 
@@ -39,7 +34,7 @@ function CheckForm({ markCompleted, day, title = 'hoy' }) {
             })
             .catch(() => {
                 const questions = [];
-                for (const [, value] of Object.entries(mockedQuestions)) {
+                for (const [, value] of Object.entries(data.mockedQuestions)) {
                     questions.push(value)
                 }
                 setCurrentQuestions(questions);

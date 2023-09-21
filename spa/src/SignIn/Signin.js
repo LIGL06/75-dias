@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Avatar, Box, Button, CardContent, CardActions, Grid, TextField, Typography } from '@mui/material';
 import { Login } from '@mui/icons-material';
+import { headers } from '../constants/constants';
+import data from '../mocks/mockedData'; // TODO: REMOVE THIS
 
 export default function SignIn() {
   const history = useNavigate();
@@ -18,20 +20,20 @@ export default function SignIn() {
   const handlePost = async (formData) => {
     await fetch('https://www.reto75dias.com.mx/api/methods/post-signin.php', {
       method: 'POST',
-      headers: new Headers({
-        'Accept': 'application/json',
-        'x-api-key': formData,
-        'User-Agent': 'Reto-75-dias-v1',
-      }),
+      headers,
       body: formData
     })
-      .then(res=> res.json())
+      .then(res => res.json())
       .then(data => {
         if (data?.id) {
           localStorage.setItem('employeeId', data.id)
           history('/dashboard');
         }
         console.log({ data })
+      })
+      .catch(() => {
+        localStorage.setItem('employeeId', data.mockedUser.id)
+        history('/dashboard');
       });
   }
 
@@ -71,9 +73,6 @@ export default function SignIn() {
         <Grid container>
           <Grid item xs>
             <Button size="small"><Link to={"/forgot"}>{"Olvide mi usuario"}</Link></Button>
-          </Grid>
-          <Grid item xs>
-            <Button size="small"><Link to={"/dashboard"}>{"D"}</Link></Button>
           </Grid>
           <Grid item>
             <Button size="small"><Link to={"/signup"}>{"Registrarse"}</Link></Button>

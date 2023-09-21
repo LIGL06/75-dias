@@ -25,17 +25,17 @@ import {
   Send as SendIcon,
   PersonAddAlt as PersonAddAltIcon,
 } from '@mui/icons-material';
-import { locations, identities } from './constants';
+import { headers, locations, identities } from '../constants/constants';
 
 export default function SignUp() {
   const [form, setForm] = useState({});
   const [valid, setValid] = useState(false);
 
-  useEffect(()=> {
+  useEffect(() => {
     const isValid = !!((form.age && form.email) &&
-    (form.employeeId && form.fullName) &&
-    (form.height && form.identity) &&
-    (form.phone && form.weigth));
+      (form.employeeId && form.fullName) &&
+      (form.height && form.identity) &&
+      (form.phone && form.weigth));
     setValid(isValid)
   }, [form])
 
@@ -51,15 +51,11 @@ export default function SignUp() {
   const handlePost = async (formData) => {
     await fetch('https://www.reto75dias.com.mx/api/methods/post-signup.php', {
       method: 'POST',
-      headers: new Headers({
-        'Accept': 'application/json',
-        'x-api-key': form.employeeId,
-        'User-Agent': 'Reto-75-dias-v1',
-      }),
+      headers,
       body: formData
     })
-    .then(res=> res.json())
-    .then(data => console.log({ data }))
+      .then(res => res.json())
+      .then(data => console.log({ data }))
   }
 
   return (
@@ -220,7 +216,7 @@ export default function SignUp() {
                   ),
                 }}
                 onChange={e => setForm({ ...form, age: e.target.value })}
-                error={(form.age <18 || form.age >100)}
+                error={(form.age < 18 || form.age > 100)}
                 variant='standard'
               />
             </Grid>
@@ -245,7 +241,7 @@ export default function SignUp() {
                   ),
                 }}
                 onChange={e => setForm({ ...form, height: parseFloat(e.target.value).toFixed(2) })}
-                error={!(form.height >=1.00 && form.height <=2.00)}
+                error={!(form.height >= 1.00 && form.height <= 2.00)}
                 variant='standard'
               />
             </Grid>
@@ -270,7 +266,7 @@ export default function SignUp() {
                   ),
                 }}
                 onChange={e => setForm({ ...form, weigth: e.target.value })}
-                error={!(form.weigth >=10.00 && form.weigth <=150.00)}
+                error={!(form.weigth >= 10.00 && form.weigth <= 150.00)}
                 variant='standard'
               />
             </Grid>

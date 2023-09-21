@@ -12,16 +12,11 @@ import {
 import PreviousForm from './PreviousForm';
 import CheckForm from './CheckForm';
 import HistoryForm from './HistoryForm';
+import { headers } from '../constants/constants';
+import data from '../mocks/mockedData'; // TODO: REMOVE THIS
 
 const steps = ['Pendientes', 'Actual', 'Avance'];
 const employeeId = localStorage.getItem('employeeId');
-const headers = new Headers({
-    'Access-Control-Allow-Origin': '*',
-    'Accept': 'application/json',
-    'User-Agent': 'Reto-75-dias-v1',
-})
-const mockedCurrentDay = 7;
-const mockedEntries = { "days": { "today": "2023-09-20", "yesterday": "2023-09-19", "prev48Hrs": "2023-09-18" }, "fromTy": { "id": "3", "employee_id": "5", "question_id": "1", "day": "20", "createdAt": "2023-09-20" }, "fromYy": { "id": "3", "employee_id": "5", "question_id": "1", "day": "20", "createdAt": "2023-09-20" }, "fromPYy": { "id": "3", "employee_id": "5", "question_id": "1", "day": "20", "createdAt": "2023-09-20" } };
 
 function Form() {
 
@@ -37,7 +32,7 @@ function Form() {
         })
             .then(res => res.json())
             .then(data => setCurrentDay(data))
-            .catch(() => setCurrentDay(mockedCurrentDay)); // TODO: REMOVE THIS
+            .catch(() => setCurrentDay(data.mockedCurrentDay)); // TODO: REMOVE THIS
         fetch('https://www.reto75dias.com.mx/api/methods/get-employee-entries.php?' + new URLSearchParams({
             employeeId
         }), {
@@ -46,10 +41,14 @@ function Form() {
         })
             .then(res => res.json())
             .then(data => setEntries(data))
-            .catch(() => setEntries(mockedEntries));  // TODO: REMOVE THIS
+            .catch(() => setEntries(data.mockedEntries));  // TODO: REMOVE THIS
     }, [])
 
     useEffect(() => {
+        handleEntries();
+    }, [entries]);
+
+    const handleEntries = () => {
         let acum = 0;
         if (entries.fromYy && !Object.keys(entries.fromYy).length) {
             acum = acum + 1;
@@ -58,11 +57,10 @@ function Form() {
             acum = acum + 1;
         }
         setPendingEntries(acum);
-        if (acum === 0) {
+        if (acum === 0 || pendingEntries === 0) {
             setActiveStep({ ...activeStep, completed: true })
         }
-        // TODO: Si hay 0 pendientes brincar al paso Actual, Sino mostrar los cuestionarios por cada día pendiente
-    }, [entries]);
+    }
 
     const handleNext = () => {
         if (activeStep.completed) {

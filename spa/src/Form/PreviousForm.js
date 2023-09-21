@@ -1,11 +1,21 @@
-import * as React from 'react';
+import React, { useEffect } from 'react';
 import { Grid, Typography } from '@mui/material'
 import CheckForm from './CheckForm';
 
-function PreviousForm({ pendingEntries, day, handleCompletion }) {
+function PreviousForm({ pendingEntries, day, markCompleted }) {
 
-    function handleComplete() {
-        console.log('mark completed!');
+    useEffect(() => {
+        if (pendingEntries === 0) {
+            markCompleted(true)
+        }
+    }, [])
+
+    function handleComplete(checked) {
+        markCompleted(checked);
+    }
+
+    const handleEmpty = () => {
+        return <Typography variant="body1" align="center">No tienes pendientes 🤩</Typography>;
     }
 
     const iterateForms = () => {
@@ -21,7 +31,7 @@ function PreviousForm({ pendingEntries, day, handleCompletion }) {
             <Grid container>
                 <Grid item xs>
                     <Typography variant="h5" align="center">
-                        {pendingEntries === 0 ? ('No tienes pendientes!') : (<>
+                        {pendingEntries === 0 ? handleEmpty() : (<>
                             Questionario {pendingEntries} días {pendingEntries > 1 ? 'previos' : 'previo'}
                             {iterateForms()}
                         </>)}

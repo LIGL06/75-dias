@@ -17,7 +17,7 @@ const headers = new Headers({
 })
 const mockedQuestions = { "1": { "content": "Com\u00ed saludable de acuerdo a mi plan", "id": "1" }, "2": { "content": "Tom\u00e9 8 vasos de agua", "id": "2" }, "3": { "content": "Me ejercit\u00e9\/camin\u00e9 al menos 5 mil pasos", "id": "3" }, "4": { "content": "Medit\u00e9 al menos 5 min en el d\u00eda", "id": "4" }, "5": { "content": "Le\u00ed 10 p\u00e1ginas o m\u00e1s de mi libro", "id": "5" }, "6": { "content": "Fuí optimista y proactiv@ durante el d\u00eda", "id": "6" } };
 
-function CheckForm({ markCompleted, day }) {
+function CheckForm({ markCompleted, day, title = 'hoy' }) {
 
     const [currentQuestions, setCurrentQuestions] = useState([]);
     const [questionsChecked, setQuestionsChecked] = useState([]);
@@ -63,6 +63,7 @@ function CheckForm({ markCompleted, day }) {
             }
             formData.append('ids', ids);
             formData.append('day', day);
+            console.log({ formData })
             await fetch('https://www.reto75dias.com.mx/api/methods/post-signup.php', {
                 method: 'POST',
                 headers,
@@ -83,7 +84,7 @@ function CheckForm({ markCompleted, day }) {
             <Grid container>
                 <Grid item xs>
                     <Typography variant="h5" align="center">
-                        Questionario de hoy
+                        Questionario de {title}
                         <FormControl sx={{ m: 3 }} component="fieldset" variant="outlined">
                             <FormLabel component="legend">Contesta de manera honesta</FormLabel>
                             {currentQuestions.map((question, index) => (

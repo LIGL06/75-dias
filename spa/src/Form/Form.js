@@ -21,7 +21,7 @@ const headers = new Headers({
     'User-Agent': 'Reto-75-dias-v1',
 })
 const mockedCurrentDay = 7;
-const mockedEntries = { "days": { "today": "2023-09-20", "yesterday": "2023-09-19", "prev48Hrs": "2023-09-18" }, "fromTy": { "id": "3", "employee_id": "5", "question_id": "1", "day": "20", "createdAt": "2023-09-20" }, "fromYy": { "id": "1", "employee_id": "5", "question_id": "1", "day": "19", "createdAt": "2023-09-19" }, "fromPYy": { "id": "1", "employee_id": "5", "question_id": "1", "day": "19", "createdAt": "2023-09-19" } };
+const mockedEntries = { "days": { "today": "2023-09-20", "yesterday": "2023-09-19", "prev48Hrs": "2023-09-18" }, "fromTy": { "id": "3", "employee_id": "5", "question_id": "1", "day": "20", "createdAt": "2023-09-20" }, "fromYy": { "id": "3", "employee_id": "5", "question_id": "1", "day": "20", "createdAt": "2023-09-20" }, "fromPYy": { "id": "3", "employee_id": "5", "question_id": "1", "day": "20", "createdAt": "2023-09-20" } };
 
 function Form() {
 
@@ -83,7 +83,7 @@ function Form() {
     function getStepContent(step) {
         switch (step.number) {
             case 0:
-                return <PreviousForm pendingEntries={pendingEntries}  />;
+                return <PreviousForm pendingEntries={pendingEntries} day={currentDay} markCompleted={handleCompletion} />;
             case 1:
                 return <CheckForm markCompleted={handleCompletion} day={currentDay} />;
             case 2:

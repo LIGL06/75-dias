@@ -27,7 +27,7 @@ function CheckForm({ markCompleted, day, title = 'hoy' }) {
             .then(data => {
                 const questions = [];
                 for (const [, value] of Object.entries(data)) {
-                    questions.push(value['content'])
+                    questions.push(value)
                 }
                 setCurrentQuestions(questions);
                 setQuestionsChecked([...Array(questions.length).keys()].map(i => false));
@@ -77,34 +77,36 @@ function CheckForm({ markCompleted, day, title = 'hoy' }) {
     return (
         <>
             <Grid container>
-                <Grid item xs>
+                <Grid item xs={12} lg={12}>
                     <Typography variant="h5" align="center">
                         Questionario de {title}
-                        <FormControl sx={{ m: 3 }} component="fieldset" variant="outlined">
-                            <FormLabel component="legend">Contesta de manera honesta</FormLabel>
-                            {currentQuestions.map((question, index) => (
-                                <FormGroup key={"question-" + question.id} sx={{ mt: 2 }}>
-                                    <FormControlLabel
-                                        control={
-                                            <Checkbox checked={questionsChecked[index + 1]} onChange={handleChange} name={question.id} color="success" />
-                                        }
-                                        label={question.content}
-                                        labelPlacement={"end"}
-                                    />
-                                </FormGroup>
-                            ))}
-                            <FormGroup sx={{ mt: 5 }}>
+                    </Typography>
+                </Grid>
+                <Grid item xs={12} lg={12}>
+                    <FormControl sx={{ m: 3 }} component="fieldset" variant="outlined">
+                        <FormLabel component="legend">Contesta de manera honesta</FormLabel>
+                        {currentQuestions.map((question, index) => (
+                            <FormGroup key={"question-" + question.id} sx={{ mt: 2 }}>
                                 <FormControlLabel
                                     control={
-                                        <Checkbox onChange={handleComplete} defaultChecked={false} name="complete" />
+                                        <Checkbox checked={questionsChecked[index + 1]} onChange={handleChange} name={question.id} color="success" />
                                     }
-                                    label="Contesté de manera honesta"
-                                    sx={{ color: "green" }}
+                                    label={question.content}
+                                    labelPlacement={"end"}
                                 />
                             </FormGroup>
-                            <FormHelperText>La útlima casilla habilita el guardado</FormHelperText>
-                        </FormControl>
-                    </Typography>
+                        ))}
+                        <FormGroup sx={{ mt: 5 }}>
+                            <FormControlLabel
+                                control={
+                                    <Checkbox onChange={handleComplete} defaultChecked={false} name="complete" />
+                                }
+                                label="Contesté de manera honesta"
+                                sx={{ color: "green" }}
+                            />
+                        </FormGroup>
+                        <FormHelperText>La útlima casilla habilita el guardado</FormHelperText>
+                    </FormControl>
                 </Grid>
             </Grid>
         </>

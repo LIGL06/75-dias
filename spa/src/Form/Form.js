@@ -15,14 +15,12 @@ import HistoryForm from './HistoryForm';
 import { headers } from '../constants/constants';
 import data from '../mocks/mockedData'; // TODO: REMOVE THIS
 
-const steps = ['Pendientes', 'Actual', 'Avance'];
-const employeeId = localStorage.getItem('employeeId');
+const oGSteps = ['Pendientes', 'Actual', 'Avance'];
 
 function Form() {
 
     const [activeStep, setActiveStep] = useState({ number: 0, completed: false });
-    const [entries, setEntries] = useState({});
-    const [pendingEntries, setPendingEntries] = useState(0);
+    const [steps, setSteps] = useState(oGSteps);
     const [currentDay, setCurrentDay] = useState(0);
 
     useEffect(() => {
@@ -33,34 +31,7 @@ function Form() {
             .then(res => res.json())
             .then(data => setCurrentDay(data))
             .catch(() => setCurrentDay(data.mockedCurrentDay)); // TODO: REMOVE THIS
-        fetch('https://www.reto75dias.com.mx/api/methods/get-employee-entries.php?' + new URLSearchParams({
-            employeeId
-        }), {
-            method: 'GET',
-            headers,
-        })
-            .then(res => res.json())
-            .then(data => setEntries(data))
-            .catch(() => setEntries(data.mockedEntries));  // TODO: REMOVE THIS
     }, [])
-
-    useEffect(() => {
-        handleEntries();
-    }, [entries]);
-
-    const handleEntries = () => {
-        let acum = 0;
-        if (entries.fromYy && !Object.keys(entries.fromYy).length) {
-            acum = acum + 1;
-        }
-        if (entries.fromPYy && !Object.keys(entries.fromPYy).length) {
-            acum = acum + 1;
-        }
-        setPendingEntries(acum);
-        if (acum === 0 || pendingEntries === 0) {
-            setActiveStep({ ...activeStep, completed: true })
-        }
-    }
 
     const handleNext = () => {
         if (activeStep.completed) {
@@ -81,7 +52,7 @@ function Form() {
     function getStepContent(step) {
         switch (step.number) {
             case 0:
-                return <PreviousForm pendingEntries={pendingEntries} day={currentDay} markCompleted={handleCompletion} />;
+                return <PreviousForm day={currentDay} markCompleted={handleCompletion} />;
             case 1:
                 return <CheckForm markCompleted={handleCompletion} day={currentDay} />;
             case 2:
@@ -90,6 +61,8 @@ function Form() {
                 throw new Error('Unknown step');
         }
     }
+
+    console.log({ activeStep })
 
     return (
         <>

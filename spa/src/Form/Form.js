@@ -20,7 +20,7 @@ const oGSteps = ['Pendientes', 'Actual', 'Avance'];
 function Form() {
 
     const [activeStep, setActiveStep] = useState({ number: 0, completed: false });
-    const [steps, setSteps] = useState(oGSteps);
+    const [steps, ] = useState(oGSteps);
     const [currentDay, setCurrentDay] = useState(0);
 
     useEffect(() => {
@@ -61,8 +61,6 @@ function Form() {
                 throw new Error('Unknown step');
         }
     }
-
-    console.log({ activeStep })
 
     return (
         <>

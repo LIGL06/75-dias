@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import { Grid, Typography } from '@mui/material'
 import CheckForm from './CheckForm';
@@ -10,7 +11,9 @@ function PreviousForm({ day, markCompleted }) {
 
     const [entries, setEntries] = useState({});
     const [pendingEntries, setPendingEntries] = useState(0);
-    const [completionArray, setCompletionArray] = useState([]);
+    const [completionArray, ] = useState([]);
+    const [, setFromYy] = useState(false);
+    const [, setFromPYy] = useState(false);
 
     useEffect(() => {
         fetch('https://www.reto75dias.com.mx/api/methods/get-employee-entries.php?' + new URLSearchParams({
@@ -32,9 +35,11 @@ function PreviousForm({ day, markCompleted }) {
         let acum = 0;
         if (!entries.fromYy || (entries.fromYy && !Object.keys(entries.fromYy).length)) {
             acum = acum + 1;
+            setFromYy(true);
         }
         if (!entries.fromPYy || (entries.fromPYy && !Object.keys(entries.fromPYy).length)) {
             acum = acum + 1;
+            setFromPYy(true);
         }
         setPendingEntries(acum);
         if (acum === 0 || pendingEntries === 0) {
@@ -49,11 +54,36 @@ function PreviousForm({ day, markCompleted }) {
                 markCompleted(checked);
             }
         }
-        console.log({ checked, index, completionArray })
     }
 
     const handleEmpty = () => {
         return <Typography variant="body1" align="center">No tienes pendientes 🤩</Typography>;
+    }
+
+    const handleDay = () => {
+        if (!entries.fromYy) {
+            return day-1;
+        }
+        if (!entries.fromPYy) {
+            return day-2;
+        }
+    }
+
+    const handleTitle = (index) => {
+        if (Math.abs(day - index) === 1) {
+            return 'ayer';
+        } else {
+            return 'antier';
+        }
+    }
+
+    const handleTitleAlt = () => {
+        if (!entries.fromYy) {
+            return 'ayer';
+        }
+        if (!entries.fromPYy) {
+            return 'antier';
+        }
     }
 
     const iterateForms = () => {
@@ -63,8 +93,8 @@ function PreviousForm({ day, markCompleted }) {
                 <Grid item xs={12} lg={12}>
                     <CheckForm
                         markCompleted={(check) => handleComplete(check, i)}
-                        day={day - (i + 1)}
-                        title={i === 0 ? 'ayer' : 'antier'}
+                        day={pendingEntries >= 2 ? day - (i + 1) : handleDay()}
+                        title={pendingEntries >= 2 ? handleTitle(day - (i + 1)) : handleTitleAlt()}
                     />
                 </Grid>)
         }
@@ -76,9 +106,7 @@ function PreviousForm({ day, markCompleted }) {
             <Grid container>
                 <Grid item xs={12} lg={12}>
                     <Typography variant="body1" align="left" sx={{ m: 1 }}>
-                        {pendingEntries === 0 ? handleEmpty() : (<>
-                            Questionario {pendingEntries} días {pendingEntries > 1 ? 'previos' : 'previo'}
-                        </>)}
+                        {pendingEntries === 0 ? handleEmpty() : null}
                     </Typography>
                 </Grid>
                 {iterateForms()}

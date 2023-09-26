@@ -10,7 +10,9 @@ import {
   Grid,
   Typography,
   InputAdornment,
-  MenuItem
+  MenuItem,
+  FormControlLabel,
+  Checkbox,
 } from '@mui/material';
 import {
   AccountCircle as AccountCircleIcon,
@@ -269,6 +271,15 @@ export default function SignUp() {
                 error={!(form.weigth >= 10.00 && form.weigth <= 150.00)}
                 variant='standard'
               />
+            </Grid>
+
+            <Grid item xs={12} lg={8}>
+                <FormControlLabel
+                  control={
+                    <Checkbox onChange={e => setForm({ ...form, sindicalized: e.target.checked })} defaultChecked={false} name="sindicalized" />
+                  }
+                  label="Sindicalizado"
+                />
             </Grid>
 
           </Grid>

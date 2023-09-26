@@ -26,7 +26,7 @@ export default function SignIn() {
       .then(res => res.json())
       .then(data => {
         if (data?.id) {
-          localStorage.setItem('employeeId', data.id)
+          localStorage.setItem('employeeId', data.employee_id)
           history('/dashboard');
         }
         console.log({ data })

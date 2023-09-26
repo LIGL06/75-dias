@@ -16,7 +16,7 @@ function CheckForm({ markCompleted, day, title = 'hoy' }) {
 
     const [currentQuestions, setCurrentQuestions] = useState([]);
     const [questionsChecked, setQuestionsChecked] = useState([]);
-    const [sent, setSent] = useState(false);
+    const [sent, ] = useState(false);
 
     useEffect(() => {
         fetch('https://www.reto75dias.com.mx/api/methods/get-questions.php', {
@@ -58,8 +58,7 @@ function CheckForm({ markCompleted, day, title = 'hoy' }) {
             }
             formData.append('ids', ids);
             formData.append('day', day);
-            console.log({ formData })
-            await fetch('https://www.reto75dias.com.mx/api/methods/post-signup.php', {
+            await fetch('https://www.reto75dias.com.mx/api/methods/post-form.php', {
                 method: 'POST',
                 headers,
                 body: formData

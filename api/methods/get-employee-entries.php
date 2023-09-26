@@ -4,13 +4,14 @@ require_once '../config/db.php';
 header("Access-Control-Allow-Origin: *");
 header("Content-type: application/json; charset=utf-8");
 header("Access-Control-Allow-Methods: GET");
-$d = new DateTimeImmutable("now");
-$tzo = new DateTimeZone("-06:00");
-$local = $d->setTimezone($tzo);
-$today = $local->format('Y-m-d');
-$yesterday = $local->modify('-1 day')->format('Y-m-d');
-$prev48Hrs = $local->modify('-2 day')->format('Y-m-d');
-$baseQuery = 'employee_id LIKE ? AND createdAt LIKE ?';
+$now = time();
+$start = strtotime("2023-07-01"); //TODO: CHANGE THIS to 2023-10-01
+$datediff = $now - $start;
+$today = $datediff / (60 * 60 * 24);
+$today = round($today);
+$yesterday = $today-1;
+$prev48Hrs = $today-2;
+$baseQuery = 'employee_id LIKE ? AND day LIKE ?';
 $days = array("today" => $today, "yesterday" => $yesterday, "prev48Hrs" => $prev48Hrs);
 if (!$_REQUEST['employeeId']) {
     $data = array("error" => "No employeeId!");
@@ -19,7 +20,7 @@ if (!$_REQUEST['employeeId']) {
     exit();
 }
 try {
-    $fromTy = R::findOne('entries', $baseQuery, [$_REQUEST['employeeId'], $today]);
+    $fromTy = R::findOne('entries', $baseQuery, [$_REQUEST['employeeId'], $day]);
     $fromYy = R::findOne('entries', $baseQuery, [$_REQUEST['employeeId'], $yesterday]);
     $fromPYy = R::findOne('entries', $baseQuery, [$_REQUEST['employeeId'], $prev48Hrs]);
 

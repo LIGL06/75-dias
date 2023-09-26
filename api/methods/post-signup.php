@@ -26,6 +26,7 @@ try {
         $user->identity = $_POST['identity'];
         $user->phone = $_POST['phone'];
         $user->weight = $_POST['weight'];
+        $user->sindicalized = $_POST['sindicalized'];
         $id = R::store($user);
         $user->id = $id;
         $_SESSION['employeeId'] = $user->employeeId;

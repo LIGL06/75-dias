@@ -1,4 +1,10 @@
-import React, { useEffect, useState } from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, {
+    createContext,
+    useEffect,
+    useState
+} from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
     Container,
     Paper,
@@ -17,20 +23,29 @@ import data from '../mocks/mockedData'; // TODO: REMOVE THIS
 
 const oGSteps = ['Pendientes', 'Actual', 'Avance'];
 
+export const FormContext = createContext({ currentDay: 0, setLoading: () => { }, handleCompletion: () => { }, activeStep: {}, setActiveStep: () => { } })
+
 function Form() {
 
+    const history = useNavigate();
     const [activeStep, setActiveStep] = useState({ number: 0, completed: false });
-    const [steps, ] = useState(oGSteps);
+    const [steps,] = useState(oGSteps);
     const [currentDay, setCurrentDay] = useState(0);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
+        const employeeId = localStorage.getItem('employeeId');
+        if (!employeeId) {
+            history('/signin');
+        }
+        setLoading(true);
         fetch('https://www.reto75dias.com.mx/api/methods/get-current-day.php', {
             method: 'GET',
             headers,
         })
             .then(res => res.json())
-            .then(data => setCurrentDay(data))
-            .catch(() => setCurrentDay(data.mockedCurrentDay)); // TODO: REMOVE THIS
+            .then(data => { setCurrentDay(data); setLoading(false); })
+            .catch(() => { setCurrentDay(data.mockedCurrentDay); setLoading(false); }); // TODO: REMOVE THIS
     }, [])
 
     const handleNext = () => {
@@ -52,62 +67,71 @@ function Form() {
     function getStepContent(step) {
         switch (step.number) {
             case 0:
-                return <PreviousForm day={currentDay} markCompleted={handleCompletion} />;
+                return <PreviousForm />;
             case 1:
-                return <CheckForm markCompleted={handleCompletion} day={currentDay} />;
+                return <CheckForm />;
             case 2:
-                return <HistoryForm completed={step.completed} />;
+                return <HistoryForm />;
             default:
                 throw new Error('Unknown step');
         }
     }
+    function handleButtonText() {
+        if (loading) {
+            return 'Cargando';
+        }
+        return activeStep === steps.length - 1 ? 'Completar' : 'Siguiente';
+    }
 
     return (
         <>
-            <Container component="main" maxWidth="sm" sx={{ mb: 4 }}>
-                <Paper variant="outlined" sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}>
-                    <Typography component="h1" variant="h4" align="right">
-                        Día #{currentDay}
-                    </Typography>
-                    <Stepper activeStep={activeStep.number} sx={{ pt: 3, pb: 5 }}>
-                        {steps.map((label) => (
-                            <Step key={label}>
-                                <StepLabel>{label}</StepLabel>
-                            </Step>
-                        ))}
-                    </Stepper>
-                    {activeStep.number === steps.length ? (
-                        <>
-                            <Typography variant="h5" gutterBottom>
-                                Gracias por tu registro
-                            </Typography>
-                            <Typography variant="subtitle1">
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer egestas vel nisi vel tristique. Proin laoreet nibh eu sapien placerat dapibus. Vestibulum fringilla a magna eleifend malesuada. Ut sem leo, rutrum at nunc quis, mollis ullamcorper dui.
-                            </Typography>
-                        </>
-                    ) : (
-                        <>
-                            {getStepContent(activeStep)}
-                            <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                                {activeStep.number !== 0 && (
-                                    <Button onClick={handleBack} sx={{ mt: 3, ml: 1 }}>
-                                        Back
-                                    </Button>
-                                )}
+            <FormContext.Provider value={{ currentDay, setLoading, handleCompletion, activeStep, setActiveStep }}>
+                <Container component="main" maxWidth="sm" sx={{ mb: 4 }}>
+                    <Paper variant="outlined" sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}>
+                        <Typography component="h1" variant="h4" align="right">
+                            Día #{currentDay}
+                        </Typography>
+                        <Stepper activeStep={activeStep.number} sx={{ pt: 3, pb: 5 }}>
+                            {steps.map((label) => (
+                                <Step key={label}>
+                                    <StepLabel>{label}</StepLabel>
+                                </Step>
+                            ))}
+                        </Stepper>
+                        {activeStep.number === steps.length ? (
+                            <>
+                                <Typography variant="h5" gutterBottom>
+                                    Gracias por tu registro
+                                </Typography>
+                                <Typography variant="subtitle1">
+                                    ¡Gracias por tu constante apoyo!<br /> Agradecemos profundamente tu valiosa contribución. <br />Tu dedicación y esfuerzo han hecho posible grandes logros en tu bienestars.
+                                </Typography>
+                                // Testimonios al día 75
+                            </>
+                        ) : (
+                            <>
+                                {getStepContent(activeStep)}
+                                <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                                    {activeStep.number !== 0 && (
+                                        <Button onClick={handleBack} sx={{ mt: 3, ml: 1 }}>
+                                            Back
+                                        </Button>
+                                    )}
 
-                                <Button
-                                    variant="contained"
-                                    onClick={handleNext}
-                                    sx={{ mt: 3, ml: 1 }}
-                                    disabled={!activeStep.completed}
-                                >
-                                    {activeStep === steps.length - 1 ? 'Completar' : 'Siguiente'}
-                                </Button>
-                            </Box>
-                        </>
-                    )}
-                </Paper>
-            </Container>
+                                    <Button
+                                        variant="contained"
+                                        onClick={handleNext}
+                                        sx={{ mt: 3, ml: 1 }}
+                                        disabled={!activeStep.completed}
+                                    >
+                                        {handleButtonText()}
+                                    </Button>
+                                </Box>
+                            </>
+                        )}
+                    </Paper>
+                </Container>
+            </FormContext.Provider>
         </>
     );
 }

@@ -1,21 +1,25 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Grid, Typography } from '@mui/material'
 import CheckForm from './CheckForm';
 import { headers } from '../constants/constants';
+import { FormContext } from './Form';
 import data from '../mocks/mockedData'; // TODO: REMOVE THIS
 
 const employeeId = localStorage.getItem('employeeId');
 
-function PreviousForm({ day, markCompleted }) {
+function PreviousForm() {
 
     const [entries, setEntries] = useState({});
     const [pendingEntries, setPendingEntries] = useState(0);
-    const [completionArray, ] = useState([]);
+    const [completionArray,] = useState([]);
     const [, setFromYy] = useState(false);
     const [, setFromPYy] = useState(false);
+    const { currentDay, setLoading, handleCompletion } = useContext(FormContext)
 
     useEffect(() => {
+        // TODO: CHECK FOR VISITED & REFILL
+        setLoading(true);
         fetch('https://www.reto75dias.com.mx/api/methods/get-employee-entries.php?' + new URLSearchParams({
             employeeId
         }), {
@@ -23,8 +27,8 @@ function PreviousForm({ day, markCompleted }) {
             headers,
         })
             .then(res => res.json())
-            .then(data => setEntries(data))
-            .catch(() => setEntries(data.mockedEntries));  // TODO: REMOVE THIS
+            .then(data => { setEntries(data); setLoading(false); })
+            .catch(() => { setEntries(data.mockedEntries); setLoading(false); });  // TODO: REMOVE THIS
     }, [])
 
     useEffect(() => {
@@ -51,7 +55,7 @@ function PreviousForm({ day, markCompleted }) {
         if (checked && !completionArray[index]) {
             completionArray.push(true);
             if (completionArray.length === pendingEntries && completionArray.every(ele => ele === true)) {
-                markCompleted(checked);
+                handleCompletion(checked);
             }
         }
     }
@@ -61,16 +65,19 @@ function PreviousForm({ day, markCompleted }) {
     }
 
     const handleDay = () => {
+        if (!currentDay || currentDay === 0) {
+            alert('Error al cargar día');
+        }
         if (!entries.fromYy) {
-            return day-1;
+            return currentDay - 1;
         }
         if (!entries.fromPYy) {
-            return day-2;
+            return currentDay - 2;
         }
     }
 
     const handleTitle = (index) => {
-        if (Math.abs(day - index) === 1) {
+        if (Math.abs(currentDay - index) === 1) {
             return 'ayer';
         } else {
             return 'antier';
@@ -93,8 +100,8 @@ function PreviousForm({ day, markCompleted }) {
                 <Grid item xs={12} lg={12}>
                     <CheckForm
                         markCompleted={(check) => handleComplete(check, i)}
-                        day={pendingEntries >= 2 ? day - (i + 1) : handleDay()}
-                        title={pendingEntries >= 2 ? handleTitle(day - (i + 1)) : handleTitleAlt()}
+                        day={pendingEntries >= 2 ? currentDay - (i + 1) : handleDay()}
+                        title={pendingEntries >= 2 ? handleTitle(currentDay - (i + 1)) : handleTitleAlt()}
                     />
                 </Grid>)
         }

@@ -1,9 +1,7 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Box from '@mui/material/Box';
-import CardContent from '@mui/material/CardContent';
-import CardActions from '@mui/material/CardActions';
-import Typography from '@mui/material/Typography';
+import { Box, CardContent, CardActions, CardMedia, Typography, Unstable_Grid2 as Grid } from '@mui/material';
 import LandingActions from './LandingActions';
 
 const bull = (
@@ -18,22 +16,38 @@ const bull = (
 export default function BasicCard() {
   const history = useNavigate();
 
-  useEffect(()=>{
-    if (localStorage.getItem('employeeId')) {
+  useEffect(() => {
+    const employeeId = localStorage.getItem('employeeId');
+    if (employeeId) {
       history('/dashboard');
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  const item = {
+    img: 'https://res.cloudinary.com/hammock-software/image/upload/v1695849364/reto-beneficios_rd0qfb.jpg',
+    title: 'beneficios-logo'
+  };
 
   return (
     <>
+      <CardMedia
+        component="img"
+        alt="logo-reto"
+        height="140"
+        image="https://res.cloudinary.com/hammock-software/image/upload/v1695849364/reto-logo_pxkjkn.jpg"
+      />
       <CardContent>
-        <Typography variant='h1'>
-          ¡Bienvenidos...
+        <Typography variant='h4' gutterBottom>
+          ¡Bienvenidos...<br />al reto 75 días!
         </Typography>
-        <Typography variant='h3' gutterBottom>
-          al reto 75 días!
-        </Typography>
+        <Grid container >
+          <img
+            srcSet={`${item.img}?w=164&h=164&fit=crop&auto=format&dpr=2 3x`}
+            src={item.img}
+            alt={item.title}
+            loading="lazy"
+          />
+        </Grid>
         <br />
         <Typography variant='h5' component='div'>
           bie{bull}nes{bull}tar{bull}

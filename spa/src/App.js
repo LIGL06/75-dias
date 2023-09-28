@@ -1,33 +1,55 @@
 import * as React from 'react';
 import { RouterProvider } from "react-router-dom";
-import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import Grid from '@mui/material/Grid';
+import {
+    Box,
+    Card,
+    Container,
+    CssBaseline,
+    Unstable_Grid2 as Grid
+} from '@mui/material';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 import './App.css';
 import router from './routes/routes';
 import Footer from './Components/Footer';
 
-function App() {
+const defaultTheme = createTheme();
+
+export default function App() {
 
     return (
-        <Box
-            sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                minHeight: '100vh',
-            }}
-        >
-            <Grid container spacing={10} justifyContent="center" alignItems="center">
-                <Grid item xs={12} lg={6}>
-                    <Card sx={{ minWidth: 500, marginTop: '20%' }}>
-                        <RouterProvider router={router} />
-                    </Card>
-                </Grid>
-            </Grid>
-            <Footer />
-        </Box>
+        <>
+            <ThemeProvider theme={defaultTheme}>
+                <Box
+                    sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        minHeight: '100vh',
+                    }}
+                >
+                    <CssBaseline />
+                    <Container maxWidth="lg">
+                        <Card>
+                            <RouterProvider router={router} />
+                        </Card>
+                    </Container>
+                    <Box
+                        component="footer"
+                        sx={{
+                            py: 3,
+                            px: 2,
+                            mt: 'auto',
+                            backgroundColor: (theme) =>
+                                theme.palette.mode === 'light'
+                                    ? theme.palette.grey[200]
+                                    : theme.palette.grey[800],
+                        }}>
+                        <Container maxWidth="lg">
+                            <Footer />
+                        </Container>
+                    </Box>
+                </Box>
+            </ThemeProvider>
+        </>
     )
 }
-
-export default App;

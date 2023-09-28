@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Avatar, Box, Button, CardContent, CardActions, Grid, TextField, Typography } from '@mui/material';
-import { Login } from '@mui/icons-material';
+import { Login, Send as SendIcon } from '@mui/icons-material';
 import { headers } from '../constants/constants';
 import data from '../mocks/mockedData'; // TODO: REMOVE THIS
+import Loader from '../Components/Loader';
 
 export default function SignIn() {
   const history = useNavigate();
 
   const [employeeId, setEmployeeId] = useState({});
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -18,6 +20,7 @@ export default function SignIn() {
   };
 
   const handlePost = async (formData) => {
+    setLoading(true);
     await fetch('https://www.reto75dias.com.mx/api/methods/post-signin.php', {
       method: 'POST',
       headers,
@@ -64,16 +67,15 @@ export default function SignIn() {
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
             disabled={employeeId === ''}
+            startIcon={loading ? <Loader /> : null}
+            endIcon={!loading ? <SendIcon /> : null}
           >
-            Ingresar
+            {loading ? 'Ingresando' : 'Ingresar'}
           </Button>
         </Box>
       </CardContent>
       <CardActions>
         <Grid container>
-          <Grid item xs>
-            <Button size="small"><Link to={"/forgot"}>{"Olvide mi usuario"}</Link></Button>
-          </Grid>
           <Grid item>
             <Button size="small"><Link to={"/signup"}>{"Registrarse"}</Link></Button>
           </Grid>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
     Grid,
     Typography,
@@ -10,36 +10,49 @@ import {
     Checkbox
 } from '@mui/material';
 import { headers } from '../constants/constants';
+import { FormContext } from './Form';
 import data from '../mocks/mockedData'; // TODO: REMOVE THIS
 
-function CheckForm({ markCompleted, day, title = 'hoy' }) {
+const hasTodayAnswer = localStorage.getItem('hasTodayAnswer');
+
+function CheckForm({ day, title = 'hoy' }) {
 
     const [currentQuestions, setCurrentQuestions] = useState([]);
     const [questionsChecked, setQuestionsChecked] = useState([]);
-    const [sent, ] = useState(false);
+    const [sent, setSent] = useState(false);
+    const { currentDay, setLoading, handleCompletion } = useContext(FormContext)
+
 
     useEffect(() => {
-        fetch('https://www.reto75dias.com.mx/api/methods/get-questions.php', {
-            method: 'GET',
-            headers,
-        })
-            .then(res => res.json())
-            .then(data => {
-                const questions = [];
-                for (const [, value] of Object.entries(data)) {
-                    questions.push(value)
-                }
-                setCurrentQuestions(questions);
-                setQuestionsChecked([...Array(questions.length).keys()].map(i => false));
+        // TODO: CHECK FOR VISITED
+        if (!hasTodayAnswer) {
+            setLoading(true);
+            fetch('https://www.reto75dias.com.mx/api/methods/get-questions.php', {
+                method: 'GET',
+                headers,
             })
-            .catch(() => {
-                const questions = [];
-                for (const [, value] of Object.entries(data.mockedQuestions)) {
-                    questions.push(value)
-                }
-                setCurrentQuestions(questions);
-                setQuestionsChecked([...Array(questions.length).keys()].map(i => false));
-            }); // TODO: REMOVE THIS
+                .then(res => res.json())
+                .then(data => {
+                    const questions = [];
+                    for (const [, value] of Object.entries(data)) {
+                        questions.push(value)
+                    }
+                    setCurrentQuestions(questions);
+                    setQuestionsChecked([...Array(questions.length).keys()].map(i => false));
+                    setLoading(false);
+                })
+                .catch(() => {
+                    const questions = [];
+                    for (const [, value] of Object.entries(data.mockedQuestions)) {
+                        questions.push(value)
+                    }
+                    setCurrentQuestions(questions);
+                    setQuestionsChecked([...Array(questions.length).keys()].map(i => false));
+                    setLoading(false);
+                }); // TODO: REMOVE THIS
+        } else {
+            setCurrentQuestions([]);
+        }
     }, [])
 
     function handleChange(e) {
@@ -57,20 +70,26 @@ function CheckForm({ markCompleted, day, title = 'hoy' }) {
                 }
             }
             formData.append('ids', ids);
-            formData.append('day', day);
+            formData.append('day', day || currentDay);
+            setLoading(true);
             await fetch('https://www.reto75dias.com.mx/api/methods/post-form.php', {
                 method: 'POST',
                 headers,
                 body: formData
             })
                 .then(res => res.json())
-                .then(data => console.log({ data }))
+                .then(data => { console.log({ data }); setLoading(false); setSent(true); })
                 .catch(() => {
+                    setSent(true);
+                    setLoading(false);
                     // Emulate success
-                });
+                }); // TODO: REMOVE THIS
         }
-        markCompleted(e.target.checked);
+        handleCompletion(e.target.checked);
+    }
 
+    const handleEmpty = () => {
+        return <Typography variant="body1" align="center">No tienes pendientes 🤩</Typography>;
     }
 
     return (
@@ -106,6 +125,11 @@ function CheckForm({ markCompleted, day, title = 'hoy' }) {
                         </FormGroup>
                         <FormHelperText>La útlima casilla habilita el guardado</FormHelperText>
                     </FormControl>
+                </Grid>
+                <Grid item xs={12} lg={12}>
+                    <Typography variant="body1" align="left" sx={{ m: 1 }}>
+                        {currentQuestions.length === 0 ? handleEmpty() : null}
+                    </Typography>
                 </Grid>
             </Grid>
         </>

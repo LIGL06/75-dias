@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Avatar, Box, Button, CardContent, CardActions, Grid, TextField, Typography } from '@mui/material';
 import { Login, Send as SendIcon } from '@mui/icons-material';
 import { headers } from '../constants/constants';
+import { AppContext } from '../App';
 import data from '../mocks/mockedData'; // TODO: REMOVE THIS
 import Loader from '../Components/Loader';
 
@@ -11,6 +12,7 @@ export default function SignIn() {
 
   const [employeeId, setEmployeeId] = useState({});
   const [loading, setLoading] = useState(false);
+  const { setUser } = useContext(AppContext)
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -29,12 +31,13 @@ export default function SignIn() {
       .then(res => res.json())
       .then(data => {
         if (data?.id) {
+          setUser(data);
           localStorage.setItem('employeeId', data.employee_id)
           history('/dashboard');
         }
-        console.log({ data })
       })
       .catch(() => {
+        setUser(data.mockedUser);
         localStorage.setItem('employeeId', data.mockedUser.id)
         history('/dashboard');
       });

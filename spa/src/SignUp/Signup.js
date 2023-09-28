@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useContext, useState, useEffect } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import {
   Avatar,
   Box,
@@ -27,11 +27,15 @@ import {
   Send as SendIcon,
   PersonAddAlt as PersonAddAltIcon,
 } from '@mui/icons-material';
+import { AppContext } from '../App';
 import { headers, locations, identities } from '../constants/constants';
+import data from '../mocks/mockedData'; // TODO: REMOVE THIS
 
 export default function SignUp() {
+  const history = useNavigate();
   const [form, setForm] = useState({});
   const [valid, setValid] = useState(false);
+  const { setUser } = useContext(AppContext)
 
   useEffect(() => {
     const isValid = !!((form.age && form.email) &&
@@ -57,7 +61,18 @@ export default function SignUp() {
       body: formData
     })
       .then(res => res.json())
-      .then(data => console.log({ data }))
+      .then(data => {
+        if (data?.id) {
+          setUser(data);
+          localStorage.setItem('employeeId', data.employee_id)
+          history('/dashboard');
+        }
+      })
+      .catch(()=> {
+        setUser(data.mockedUser);
+          localStorage.setItem('employeeId', data.mockedUser.employee_id)
+          history('/dashboard');
+      }); //TODO: REMOVE THIS
   }
 
   return (
@@ -274,12 +289,12 @@ export default function SignUp() {
             </Grid>
 
             <Grid item xs={12} lg={8}>
-                <FormControlLabel
-                  control={
-                    <Checkbox onChange={e => setForm({ ...form, sindicalized: e.target.checked })} defaultChecked={false} name="sindicalized" />
-                  }
-                  label="Sindicalizado"
-                />
+              <FormControlLabel
+                control={
+                  <Checkbox onChange={e => setForm({ ...form, sindicalized: e.target.checked })} defaultChecked={false} name="sindicalized" />
+                }
+                label="Sindicalizado"
+              />
             </Grid>
 
           </Grid>

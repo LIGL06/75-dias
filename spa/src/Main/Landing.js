@@ -37,30 +37,14 @@ export default function BasicCard() {
         image="https://res.cloudinary.com/hammock-software/image/upload/v1695849364/reto-logo_pxkjkn.jpg"
       />
       <CardContent>
-        <Typography variant='h4' gutterBottom>
-          ¡Bienvenidos...<br />al reto 75 días!
+        <Typography variant='h4' align='center' gutterBottom>
+          BIENVENIDOS
         </Typography>
-        <Grid container >
-          <img
-            srcSet={`${item.img}?w=164&h=164&fit=crop&auto=format&dpr=2 3x`}
-            src={item.img}
-            alt={item.title}
-            loading="lazy"
-          />
-        </Grid>
-        <br />
-        <Typography variant='h5' component='div'>
-          bie{bull}nes{bull}tar{bull}
+        <Typography variant='h4' align='center' gutterBottom>
+          RETO 75 DÍAS
         </Typography>
-        <Typography variant='subtitle2' color='text.secondary' gutterBottom>
-          nombre masculino
-        </Typography>
-        <Typography variant='body1' gutterBottom>
-          Estado de la persona cuyas condiciones físicas y mentales le proporcionan un sentimiento de satisfacción y tranquilidad.
-          <br />
-        </Typography>
-        <Typography variant='body2' color='text.secondary' gutterBottom>
-          'con este reto vas a notar una sensación de bienestar general en todo tu cuerpo'
+        <Typography variant='body2' align='center' color='text.secondary' gutterBottom>
+          Con este reto vas a notar una sensación de bienestar general en todo tu cuerpo
         </Typography>
         <br />
       </CardContent>

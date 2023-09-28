@@ -1,9 +1,10 @@
-import React from 'react';
+import React, {  } from 'react';
 import { createBrowserRouter } from "react-router-dom";
 import Landing from '../Main/Landing';
 import SignUp from '../SignUp/Signup';
 import SignIn from '../SignIn/Signin';
 import Form from '../Form/Form';
+import Logout from '../Logout';
 
 export default createBrowserRouter([
   {
@@ -21,5 +22,9 @@ export default createBrowserRouter([
   {
     path: "/dashboard",
     element: <Form />,
+  },
+  {
+    path: "/logout",
+    element: <Logout />,
   },
 ]);

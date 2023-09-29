@@ -64,14 +64,16 @@ export default function SignUp() {
       .then(data => {
         if (data?.id) {
           setUser(data);
+          localStorage.setItem('user', JSON.stringify(data))
           localStorage.setItem('employeeId', data.employee_id)
           history('/dashboard');
         }
       })
-      .catch(()=> {
+      .catch(() => {
         setUser(data.mockedUser);
-          localStorage.setItem('employeeId', data.mockedUser.employee_id)
-          history('/dashboard');
+        localStorage.setItem('user', JSON.stringify(data.mockedUser))
+        localStorage.setItem('employeeId', data.mockedUser.employee_id)
+        history('/dashboard');
       }); //TODO: REMOVE THIS
   }
 

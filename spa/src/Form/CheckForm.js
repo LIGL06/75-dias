@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useContext, useEffect, useState } from 'react';
 import {
     Grid,
@@ -10,10 +11,9 @@ import {
     Checkbox
 } from '@mui/material';
 import { headers } from '../constants/constants';
+import { AppContext } from '../App';
 import { FormContext } from './Form';
 import data from '../mocks/mockedData'; // TODO: REMOVE THIS
-
-const hasTodayAnswer = localStorage.getItem('hasTodayAnswer');
 
 function CheckForm({ day, title = 'hoy' }) {
 
@@ -21,13 +21,49 @@ function CheckForm({ day, title = 'hoy' }) {
     const [questionsChecked, setQuestionsChecked] = useState([]);
     const [sent, setSent] = useState(false);
     const { currentDay, setLoading, handleCompletion } = useContext(FormContext)
+    const { user } = useContext(AppContext);
 
 
     useEffect(() => {
         // TODO: CHECK FOR VISITED
-        if (!hasTodayAnswer) {
-            setLoading(true);
-            fetch('https://www.reto75dias.com.mx/api/methods/get-questions.php', {
+        setLoading(true);
+
+        fetch('https://www.reto75dias.com.mx/api/methods/get-questions.php', {
+            method: 'GET',
+            headers,
+        })
+            .then(res => res.json())
+            .then(data => {
+                const questions = [];
+                const answered = [];
+                for (const [, value] of Object.entries(data)) {
+                    questions.push(value)
+                    answered.push({ [value.id]: false })
+                }
+                setCurrentQuestions(questions);
+                setQuestionsChecked(answered);
+                setLoading(false);
+            })
+            .catch(() => {
+                const questions = [];
+                const answered = [];
+                for (const [, value] of Object.entries(data.mockedQuestions)) {
+                    questions.push(value)
+                    answered.push({ [value.id]: false })
+                }
+                setCurrentQuestions(questions);
+                setQuestionsChecked(answered);
+                setLoading(false);
+            }); // TODO: REMOVE THIS
+
+    }, [])
+
+    useEffect(() => {
+        if (currentQuestions.length) {
+            fetch('https://www.reto75dias.com.mx/api/methods/get-employee-day-entries.php?' + new URLSearchParams({
+                employeeId: user.employee_id,
+                day: day || currentDay
+            }), {
                 method: 'GET',
                 headers,
             })
@@ -35,39 +71,44 @@ function CheckForm({ day, title = 'hoy' }) {
                 .then(data => {
                     const questions = [];
                     for (const [, value] of Object.entries(data)) {
-                        questions.push(value)
+                        const question = currentQuestions.find(element => element.id === value.question_id);
+                        if (question) {
+                            questions.push(question.id);
+                        }
                     }
-                    setCurrentQuestions(questions);
-                    setQuestionsChecked([...Array(questions.length).keys()].map(i => false));
+                    setQuestionsChecked(questions);
                     setLoading(false);
                 })
                 .catch(() => {
                     const questions = [];
-                    for (const [, value] of Object.entries(data.mockedQuestions)) {
-                        questions.push(value)
+                    for (const [, value] of Object.entries(data.mockedDayEntries)) {
+                        const question = currentQuestions.find(element => element.id === value.question_id);
+                        if (question) {
+                            questions.push(question.id);
+                        }
                     }
-                    setCurrentQuestions(questions);
-                    setQuestionsChecked([...Array(questions.length).keys()].map(i => false));
+                    setQuestionsChecked(questions);
                     setLoading(false);
-                }); // TODO: REMOVE THIS
-        } else {
-            setCurrentQuestions([]);
+                });  // TODO: REMOVE THIS
         }
-    }, [])
+    }, [currentQuestions])
 
     function handleChange(e) {
-        setQuestionsChecked({ ...questionsChecked, [e.target.name]: e.target.checked });
+        if (e.target.checked) {
+            setQuestionsChecked([...questionsChecked, e.target.name]);
+        } else {
+            const elements = questionsChecked.filter(el => el !== e.target.name);
+            setQuestionsChecked(elements);
+        }
     }
 
     const handleComplete = async (e) => {
         if (e.target.checked && !sent) {
             const formData = new FormData();
-            formData.append('employeeId', localStorage.getItem('employeeId'));
+            formData.append('employeeId', user.employee_id);
             const ids = [];
-            for (const [key, value] of Object.entries(questionsChecked)) {
-                if (value) {
-                    ids.push(key);
-                }
+            for (const [, entry] of Object.entries(questionsChecked)) {
+                ids.push(entry);
             }
             formData.append('ids', ids);
             formData.append('day', day || currentDay);
@@ -92,22 +133,32 @@ function CheckForm({ day, title = 'hoy' }) {
         return <Typography variant="body1" align="center">No tienes pendientes 🤩</Typography>;
     }
 
+    const handleChecked = (questionId) => {
+        return !!questionsChecked.find(el => el === questionId);
+    }
+
     return (
         <>
             <Grid container>
                 <Grid item xs={12} lg={12}>
                     <Typography variant="h5" align="center">
-                        Questionario de {title}
+                        FRASE DEL DÍA
                     </Typography>
                 </Grid>
                 <Grid item xs={12} lg={12}>
                     <FormControl sx={{ m: 3 }} component="fieldset" variant="outlined">
-                        <FormLabel component="legend">Contesta de manera honesta</FormLabel>
-                        {currentQuestions.map((question, index) => (
+                        <FormLabel component="legend">Questionario de día #{day || currentDay}</FormLabel>
+                        {currentQuestions.map(question => (
                             <FormGroup key={"question-" + question.id} sx={{ mt: 2 }}>
                                 <FormControlLabel
                                     control={
-                                        <Checkbox checked={questionsChecked[index + 1]} onChange={handleChange} name={question.id} color="success" />
+                                        <Checkbox
+                                            defaultChecked={false}
+                                            checked={handleChecked(question.id) || false}
+                                            onChange={handleChange}
+                                            name={question.id}
+                                            color="success"
+                                        />
                                     }
                                     label={question.content}
                                     labelPlacement={"end"}

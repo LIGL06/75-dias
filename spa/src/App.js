@@ -1,4 +1,4 @@
-import React, { createContext, useState } from 'react';
+import React, { createContext, useEffect, useState } from 'react';
 import { RouterProvider } from "react-router-dom";
 import {
     Box,
@@ -17,6 +17,12 @@ export const AppContext = createContext({ user: {}, setUser: () => { } })
 
 export default function App() {
     const [user, setUser] = useState({})
+
+    useEffect(() => {
+        if (localStorage.getItem('user')) {
+            setUser(JSON.parse(localStorage.getItem('user')))
+        }
+    }, [])
 
     return (
         <>

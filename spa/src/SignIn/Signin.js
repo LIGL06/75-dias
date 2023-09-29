@@ -32,12 +32,14 @@ export default function SignIn() {
       .then(data => {
         if (data?.id) {
           setUser(data);
+          localStorage.setItem('user', JSON.stringify(data))
           localStorage.setItem('employeeId', data.employee_id)
           history('/dashboard');
         }
       })
       .catch(() => {
         setUser(data.mockedUser);
+        localStorage.setItem('user', JSON.stringify(data.mockedUser))
         localStorage.setItem('employeeId', data.mockedUser.id)
         history('/dashboard');
       });

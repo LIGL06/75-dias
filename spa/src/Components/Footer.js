@@ -8,7 +8,7 @@ function Footer() {
     return (
         <>
             {user.employee_id &&
-                <Typography variant='caption' display="block" color='text.secondary' align='center' sx={{ m: 1 }}>
+                <Typography variant='caption' display="block" color='text.secondary' align='center' sx={{ m: 0 }}>
                     {`#empleado ${user.employee_id} - `}
                     <Link href="/logout" color="inherit">
                         {'Cerrar sesión'}
@@ -24,7 +24,7 @@ function Footer() {
                 {'.'}
             </Typography>
 
-            <Typography variant="caption" display="block" align='center' gutterBottom>
+            <Typography variant="caption" display="block" align='center' gutterBottom sx={{ m: 1, fontSize: 8 }}>
                 {'Made with 🖤 by: '}
                 <Link href="mailto:luis.garcialuna@outlook.com?Subject=Interesado en tus servicios" color="inherit">
                     {'Iván García'}

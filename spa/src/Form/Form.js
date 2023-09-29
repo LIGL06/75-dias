@@ -6,14 +6,13 @@ import React, {
 } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
+    Alert,
+    AlertTitle,
+    Box,
+    Button,
     Container,
     Paper,
     Typography,
-    Stepper,
-    Step,
-    StepLabel,
-    Box,
-    Button
 } from '@mui/material';
 import PreviousForm from './PreviousForm';
 import CheckForm from './CheckForm';
@@ -32,6 +31,7 @@ function Form() {
     const [steps,] = useState(oGSteps);
     const [currentDay, setCurrentDay] = useState(0);
     const [loading, setLoading] = useState(false);
+    const [successAlert, setSuccessAlert] = useState(false);
 
     useEffect(() => {
         const employeeId = localStorage.getItem('employeeId');
@@ -61,6 +61,7 @@ function Form() {
     };
 
     const handleCompletion = (completed) => {
+        setSuccessAlert(true);
         setActiveStep({ ...activeStep, completed });
     }
 
@@ -83,6 +84,13 @@ function Form() {
         return activeStep === steps.length - 1 ? 'Completar' : 'Siguiente';
     }
 
+    const renderSuccessAlert = () => {
+        return <Alert severity="success">
+            <AlertTitle>Success</AlertTitle>
+            This is a success alert — <strong>check it out!</strong>
+        </Alert>;
+    }
+
     return (
         <>
             <FormContext.Provider value={{ currentDay, setLoading, handleCompletion, activeStep, setActiveStep }}>
@@ -91,13 +99,6 @@ function Form() {
                         <Typography component="h1" variant="h4" align="right">
                             Día #{currentDay}
                         </Typography>
-                        <Stepper activeStep={activeStep.number} sx={{ pt: 3, pb: 5 }}>
-                            {steps.map((label) => (
-                                <Step key={label}>
-                                    <StepLabel>{label}</StepLabel>
-                                </Step>
-                            ))}
-                        </Stepper>
                         {activeStep.number === steps.length ? (
                             <>
                                 <Typography variant="h5" gutterBottom>

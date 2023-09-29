@@ -15,7 +15,7 @@ function PreviousForm() {
     const [completionArray,] = useState([]);
     const [, setFromYy] = useState(false);
     const [, setFromPYy] = useState(false);
-    const { currentDay, setLoading, handleCompletion } = useContext(FormContext)
+    const { currentDay, setLoading, handleCompletion } = useContext(FormContext);
 
     useEffect(() => {
         // TODO: CHECK FOR VISITED & REFILL

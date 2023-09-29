@@ -6,7 +6,7 @@ export default function Logout() {
     const history = useNavigate();
     useEffect(() => {
         localStorage.clear();
-        history('/');
+        history('/signin');
     }, [])
     return (<></>);
 }

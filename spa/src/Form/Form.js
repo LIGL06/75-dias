@@ -11,12 +11,16 @@ import {
     Box,
     Button,
     Container,
+    Step,
+    Stepper,
+    StepLabel,
     Paper,
     Typography,
 } from '@mui/material';
 import PreviousForm from './PreviousForm';
 import CheckForm from './CheckForm';
 import HistoryForm from './HistoryForm';
+import FinishedForm from './FinishedForm';
 import { headers } from '../constants/constants';
 import data from '../mocks/mockedData'; // TODO: REMOVE THIS
 
@@ -73,6 +77,8 @@ function Form() {
                 return <CheckForm />;
             case 2:
                 return <HistoryForm />;
+            case 3:
+                return <FinishedForm isFinished={isFinished()} />;
             default:
                 throw new Error('Unknown step');
         }
@@ -91,6 +97,10 @@ function Form() {
         </Alert>;
     }
 
+    const isFinished = () => {
+        return currentDay === 75;
+    }
+
     return (
         <>
             <FormContext.Provider value={{ currentDay, setLoading, handleCompletion, activeStep, setActiveStep }}>
@@ -99,37 +109,32 @@ function Form() {
                         <Typography component="h1" variant="h4" align="right">
                             Día #{currentDay}
                         </Typography>
-                        {activeStep.number === steps.length ? (
-                            <>
-                                <Typography variant="h5" gutterBottom>
-                                    Gracias por tu registro
-                                </Typography>
-                                <Typography variant="subtitle1">
-                                    ¡Gracias por tu constante apoyo!<br /> Agradecemos profundamente tu valiosa contribución. <br />Tu dedicación y esfuerzo han hecho posible grandes logros en tu bienestars.
-                                </Typography>
-                                // Testimonios al día 75
-                            </>
-                        ) : (
-                            <>
-                                {getStepContent(activeStep)}
-                                <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                                    {activeStep.number !== 0 && (
-                                        <Button onClick={handleBack} sx={{ mt: 3, ml: 1 }}>
-                                            Back
-                                        </Button>
-                                    )}
+                        <Stepper activeStep={activeStep.number} sx={{ pt: 3, pb: 5 }}>
+                            {steps.map((label) => (
+                                <Step key={label}>
+                                    <StepLabel>{label}</StepLabel>
+                                </Step>
+                            ))}
+                        </Stepper>
 
-                                    <Button
-                                        variant="contained"
-                                        onClick={handleNext}
-                                        sx={{ mt: 3, ml: 1 }}
-                                        disabled={!activeStep.completed}
-                                    >
-                                        {handleButtonText()}
-                                    </Button>
-                                </Box>
-                            </>
-                        )}
+                        {getStepContent(activeStep)}
+                        <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                            {activeStep.number !== 0 && (
+                                <Button onClick={handleBack} sx={{ mt: 3, ml: 1 }}>
+                                    Back
+                                </Button>
+                            )}
+
+                            <Button
+                                variant="contained"
+                                onClick={handleNext}
+                                sx={{ mt: 3, ml: 1 }}
+                                disabled={!activeStep.completed}
+                            >
+                                {handleButtonText()}
+                            </Button>
+                        </Box>
+
                     </Paper>
                 </Container>
             </FormContext.Provider>

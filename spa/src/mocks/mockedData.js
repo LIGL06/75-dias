@@ -7,7 +7,7 @@ const mockedEntry = {
 
 };
 const data = {
-    mockedCurrentDay: 7,
+    mockedCurrentDay: 75,
     mockedEntries: {
         "days": { "today": "2023-09-20", "yesterday": "2023-09-19", "prev48Hrs": "2023-09-18" }, "fromTy": null, "fromYy": null, "fromPYy": null
     },

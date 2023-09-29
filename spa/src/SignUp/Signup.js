@@ -247,8 +247,9 @@ export default function SignUp() {
                 id='height'
                 type="number"
                 label='Estatura (mts)'
+                defaultValue={1}
                 inputProps={{
-                  step: 0.05,
+                  step: 0.01,
                   min: 1,
                   max: 2
                 }}
@@ -272,8 +273,9 @@ export default function SignUp() {
                 type='number'
                 id='weigth'
                 label='Peso (kgs)'
+                defaultValue={10}
                 inputProps={{
-                  step: 1,
+                  step: 0.05,
                   min: 10,
                   max: 150
                 }}

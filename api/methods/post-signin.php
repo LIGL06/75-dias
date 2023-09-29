@@ -15,11 +15,10 @@ try {
     if ($user) {
         $_SESSION['employeeId'] = $user->employee_id;
         echo json_encode($user);
-        exit();
+        exit;
     } else {
-        $data = array("message" => "Register!");
-        echo json_encode($data);
-        exit();
+        header("HTTP/1.1 401 Unauthorized");
+        exit;
     }
 } catch (PDOException $e) {
     $data = array("message" => $e->getmessage());

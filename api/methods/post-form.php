@@ -21,6 +21,8 @@ try {
     if (isset($_POST['ids']) && isset($_POST['day'])) {
         $entries = explode(",", $_POST['ids']);
         $data = array();
+        $existent = R::find('entries', 'employee_id LIKE ? AND day LIKE ?', [$_REQUEST['employeeId'], $_REQUEST['day']]);
+        R::trashAll( $existent ); //for multiple beans
         foreach ($entries as $key => $value) {
             $now = time();
             $start = strtotime("2023-07-01"); //TODO: CHANGE THIS to 2023-10-01
@@ -39,10 +41,8 @@ try {
         echo json_encode($data);
         exit();
     } else {
-        // TODO: Do error handling
-        $data = array("error" => "Incomplete data!");
-        echo json_encode($data);
-        exit();
+        header("HTTP/1.1 401 Unauthorized");
+        exit;
     }
 } catch (PDOException $e) {
     // TODO: Do error handling

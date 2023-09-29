@@ -27,9 +27,27 @@ function PreviousForm() {
             headers,
         })
             .then(res => res.json())
-            .then(data => { setEntries(data); setLoading(false); })
-            .catch(() => { setEntries(data.mockedEntries); setLoading(false); });  // TODO: REMOVE THIS
+            .then(data => {
+                if (currentDay === 1) {
+                    console.log('Current DAY is 1!!')
+                    setLoading(false);
+                    setPendingEntries(0);
+                    return;
+                }
+                setEntries(data);
+                setLoading(false);
+            })
+            .catch(() => {
+                alert('Por el momento no podemos obenter tus registros previos \n Por favor, intente más tarde');
+                setLoading(false);
+            });  // TODO: REMOVE THIS
     }, [])
+
+    useEffect(() => {
+        if (pendingEntries === 0 || currentDay === 1) {
+            handleCompletion(true);
+        }
+    }, [pendingEntries]);
 
     useEffect(() => {
         handleEntries();
@@ -98,11 +116,13 @@ function PreviousForm() {
         for (let i = 0; i < pendingEntries; i++) {
             elements.push(
                 <Grid item xs={12} lg={12}>
-                    <CheckForm
-                        markCompleted={(check) => handleComplete(check, i)}
-                        day={pendingEntries >= 2 ? currentDay - (i + 1) : handleDay()}
-                        title={pendingEntries >= 2 ? handleTitle(currentDay - (i + 1)) : handleTitleAlt()}
-                    />
+                    {currentDay >= 2 &&
+                        <CheckForm
+                            markCompleted={(check) => handleComplete(check, i)}
+                            day={pendingEntries >= 2 ? currentDay - (i + 1) : handleDay()}
+                            title={pendingEntries >= 2 ? handleTitle(currentDay - (i + 1)) : handleTitleAlt()}
+                        />
+                    }
                 </Grid>)
         }
         return elements;

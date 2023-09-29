@@ -33,10 +33,8 @@ try {
         echo json_encode($user);
         exit();
     } else {
-        // TODO: Do error handling
-        $data = array("message" => "Incomplete data!");
-        echo json_encode($data);
-        exit();
+        header("HTTP/1.1 401 Unauthorized");
+        exit;
     }
 } catch (PDOException $e) {
     // TODO: Do error handling

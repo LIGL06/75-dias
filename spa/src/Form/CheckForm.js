@@ -17,6 +17,7 @@ import data from '../mocks/mockedData'; // TODO: REMOVE THIS
 
 function CheckForm({ day, title = 'hoy' }) {
 
+    const [phrase, setPhrase] = useState('');
     const [currentQuestions, setCurrentQuestions] = useState([]);
     const [questionsChecked, setQuestionsChecked] = useState([]);
     const [sent, setSent] = useState(false);
@@ -53,6 +54,21 @@ function CheckForm({ day, title = 'hoy' }) {
                 }
                 setCurrentQuestions(questions);
                 setQuestionsChecked(answered);
+                setLoading(false);
+            }); // TODO: REMOVE THIS
+        fetch('https://www.reto75dias.com.mx/api/methods/get-day-phrase.php?' + new URLSearchParams({
+            day: day || currentDay
+        }), {
+            method: 'GET',
+            headers,
+        })
+            .then(res => res.json())
+            .then(data => {
+                setPhrase(data?.content);
+                setLoading(false);
+            })
+            .catch(() => {
+                setPhrase('This is a phrase!')
                 setLoading(false);
             }); // TODO: REMOVE THIS
 
@@ -142,7 +158,7 @@ function CheckForm({ day, title = 'hoy' }) {
             <Grid container>
                 <Grid item xs={12} lg={12}>
                     <Typography variant="h5" align="center">
-                        FRASE DEL DÍA
+                        {phrase}
                     </Typography>
                 </Grid>
                 <Grid item xs={12} lg={12}>

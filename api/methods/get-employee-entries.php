@@ -26,17 +26,17 @@ try {
 
     $entries = array("days" => $days, "fromTy" => $fromTy, "fromYy" => $fromYy, "fromPYy" => $fromPYy);
     // Consultar si hay registros de 48 hrs atrás, si sí ya contesto, sino toca poner esos días previos
+    R::close();
     if ($entries) {
         echo json_encode($entries);
+        exit;
     } else {
-        $data = array("data" => []);
-        echo json_encode($data);
+        header("HTTP/1.1 401 Unauthorized");
+        exit;
     }
-    R::close();
-    exit();
 } catch (PDOException $e) {
     $data = array("error" => $e->getmessage());
     echo json_encode($data);
     R::close();
-    exit();
+    exit;
 }

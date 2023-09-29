@@ -12,6 +12,7 @@ export default function SignIn() {
 
   const [employeeId, setEmployeeId] = useState({});
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
   const { setUser } = useContext(AppContext)
 
   const handleSubmit = (event) => {
@@ -38,11 +39,14 @@ export default function SignIn() {
         }
       })
       .catch(() => {
-        setUser(data.mockedUser);
-        localStorage.setItem('user', JSON.stringify(data.mockedUser))
-        localStorage.setItem('employeeId', data.mockedUser.id)
-        history('/dashboard');
+        setLoading(false)
+        setError(true);
       });
+  }
+
+  function handleInputChange(event) {
+    setError(false);
+    setEmployeeId(event.target.value);
   }
 
   return (
@@ -63,17 +67,17 @@ export default function SignIn() {
             label="# de Empleado"
             name="employeeId"
             autoComplete="employeeId"
-            onChange={e => setEmployeeId(e.target.value)}
-            error={employeeId === ''}
+            onChange={handleInputChange}
+            error={error || employeeId === ''}
           />
           <Button
             type="submit"
             fullWidth
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
-            disabled={employeeId === ''}
             startIcon={loading ? <Loader /> : null}
             endIcon={!loading ? <SendIcon /> : null}
+            disabled={error || employeeId === ''}
           >
             {loading ? 'Ingresando' : 'Ingresar'}
           </Button>

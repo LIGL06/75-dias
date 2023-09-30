@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-escape */
 import React, { useContext, useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import {
@@ -33,7 +34,9 @@ import Loader from '../Components/Loader';
 
 export default function SignUp() {
   const history = useNavigate();
-  const [form, setForm] = useState({});
+  const [form, setForm] = useState({
+    age: 17
+  });
   const [valid, setValid] = useState(false);
   const [loading, setLoading] = useState(false);
   const { setUser } = useContext(AppContext)
@@ -219,7 +222,7 @@ export default function SignUp() {
                 required
                 fullWidth
                 type='number'
-                defaultValue={18}
+                defaultValue={17}
                 id='age'
                 label='Edad (solo número)'
                 inputProps={{
@@ -235,7 +238,7 @@ export default function SignUp() {
                   ),
                 }}
                 onChange={e => setForm({ ...form, age: e.target.value })}
-                error={(form.age < 18 || form.age > 100)}
+                error={(form.age <= 17 || form.age > 100)}
                 variant='standard'
               />
             </Grid>

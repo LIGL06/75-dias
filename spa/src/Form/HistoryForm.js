@@ -12,7 +12,7 @@ import { FormContext } from './Form';
 function HistoryForm() {
     const [applies, setApplies] = useState(true);
     const [form, setForm] = useState({});
-    const { handleCompletion, currentDay, handleFeedback } = useContext(FormContext);
+    const { handleCompletion, currentDay, handleFeedback, setLoading } = useContext(FormContext);
 
     useEffect(() => {
         if (currentDay % 7 !== 0) {
@@ -26,17 +26,25 @@ function HistoryForm() {
         }
     }, [applies])
 
+    useEffect(() => {
+        if (form?.weight) {
+            setLoading(true);
+            verify(form.weight);
+        }
+    }, [form])
+
     const verify = useCallback(
         debounce(weight => {
             const week = currentDay / 7;
             if (week >= 1) {
+                localStorage.setItem('weight', weight);
+                localStorage.setItem('week', week);
                 handleFeedback(weight, week);
             }
         }, 1000), []);
 
     const handleChange = e => {
         setForm({ ...form, weight: e.target.value });
-        verify(e.target.value);
     }
 
     function renderWeight() {
@@ -69,7 +77,7 @@ function HistoryForm() {
                         step: 0.05,
                         min: 10,
                         max: 150,
-                        inputMode: 'numeric',
+                        inputMode: 'decimal',
                     }}
                     InputProps={{
                         startAdornment: (
@@ -79,6 +87,7 @@ function HistoryForm() {
                         ),
                     }}
                     onChange={handleChange}
+                    onKeyUp={() => verify(form?.weight)}
                     error={!(form.weight >= 10.00 && form.weight <= 150.00)}
                     disabled={!applies}
                     variant='standard'

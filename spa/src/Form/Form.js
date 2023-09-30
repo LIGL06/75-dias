@@ -36,8 +36,8 @@ function Form() {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        const employeeId = localStorage.getItem('employeeId');
-        if (!employeeId) {
+        const user = localStorage.getItem('user');
+        if (!JSON.parse(user)) {
             history('/signin');
         }
         getCurrentDay();
@@ -53,6 +53,7 @@ function Form() {
                     .then(res => res.json())
                     .then(data => { setCurrentDay(data); setLoading(false); })
                     .catch(() => {
+                        setCurrentDay(7);
                         alert('Por el momento no podemos obtener el día actual. \nPor favor, intente más tarde');
                         setLoading(false);
                     });
@@ -77,8 +78,8 @@ function Form() {
 
     const handleFeedback = (weight, week) => {
         const formData = new FormData();
-        formData.append("weight", weight);
-        formData.append("week", week);
+        formData.append("weight", localStorage.getItem('weight') || weight);
+        formData.append("week", localStorage.getItem('week') || week);
         formData.append("employeeId", localStorage.getItem('employeeId'));
         postFeedback(formData);
     }
@@ -95,15 +96,18 @@ function Form() {
                     .then(res => res.json())
                     .then(data => {
                         if (data?.id) {
-                            alert('Avance registrado');
+                            alert('Avance creado con éxito');
+                            setLoading(false);
+                            setActiveStep({ ...activeStep, completed: true });
                         }
                     })
                     .catch(() => {
                         alert('Por el momento no podemos crear el avance. \nPor favor, intente más tarde');
+                        setActiveStep({ ...activeStep, completed: false });
                         setLoading(false);
                     });
             }
-        }, 200), []);
+        }, 200), [activeStep]);
 
     function getStepContent(step) {
         switch (step.number) {
@@ -158,7 +162,7 @@ function Form() {
                                 variant="contained"
                                 onClick={handleNext}
                                 sx={{ mt: 3, ml: 1 }}
-                                disabled={!activeStep.completed}
+                                disabled={!activeStep.completed || loading}
                             >
                                 {handleButtonText()}
                             </Button>

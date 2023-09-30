@@ -7,12 +7,12 @@ import { headers } from '../constants/constants';
 
 export default function BasicCard() {
   const history = useNavigate();
-  const [loading, setLoading] = useState(true);
+  const [, setLoading] = useState(true);
   const [phrase, setPhrase] = useState('');
 
   useEffect(() => {
-    const employeeId = localStorage.getItem('employeeId');
-    if (employeeId) {
+    const user = localStorage.getItem('user');
+    if (JSON.parse(user)) {
       history('/dashboard');
     }
     fetch('https://www.reto75dias.com.mx/api/methods/get-day-phrase.php?' + new URLSearchParams({

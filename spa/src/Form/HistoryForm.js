@@ -50,12 +50,12 @@ function HistoryForm() {
     function renderWeight() {
         return (<>
             <Typography variant="body1" align="left" sx={{ m: 1 }}>
-                ¡Felicidades haz completado una semana del reto!
+                ¡Felicidades has completado una semana del reto!
             </Typography>
             <FormLabel component="legend">Guarda el progreso de tu avance en este apartado 👏</FormLabel>
             <FormGroup sx={{ m: 3 }}>
                 <FormControlLabel
-                    label="No aplica"
+                    label="Si no tienes tu peso, checa ésta casilla"
                     control={<Checkbox
                         checked={!applies}
                         onChange={() => setApplies(!applies)}

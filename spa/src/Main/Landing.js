@@ -32,6 +32,11 @@ export default function BasicCard() {
       });
   }, [])
 
+  const randomColor = () => {
+    const colors = ['#824EDC', '#ECF8CC', '#ED6BE8', '#D0FA66', '#ABDFF7'];
+    return colors[Math.floor(Math.random() * colors.length)];
+}
+
   return (
     <>
       <CardMedia
@@ -44,10 +49,10 @@ export default function BasicCard() {
         <Typography variant='h4' align='center' gutterBottom sx={{ mb: 2, color: 'orange', fontWeight: 800 }}>
           BIENVENIDOS
         </Typography>
-        <Typography variant='h4' align='center' gutterBottom sx={{ color: 'blue', fontWeight: 900 }}>
+        <Typography variant='h4' align='center' gutterBottom sx={{ fontWeight: 700, color: '#5EC4CC', fontFamily: 'Paytone One, sans-serif' }}>
           RETO 75 DÍAS
         </Typography>
-        <Typography variant='body2' align='center' color='text.secondary' gutterBottom>
+        <Typography variant='body2' align='center' gutterBottom>
           {phrase}
         </Typography>
         <Grid container>

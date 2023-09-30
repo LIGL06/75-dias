@@ -92,6 +92,7 @@ function CheckForm({ day }) {
                     .catch(() => {
                         alert(`Por el momento no podemos obenter tus registro del día ${day || currentDay}. \nPor favor, intente más tarde`)
                         setLoading(false);
+                        handleCompletion(false);
                     });
             }
         }, 200), []);
@@ -148,24 +149,29 @@ function CheckForm({ day }) {
     }
 
     const handleEmpty = () => {
-        return <Typography variant="body1" align="center">No tienes pendientes 🤩</Typography>;
+        return <Typography variant="caption" align="center">Oops! No pudimos obtener las preguntas 😥</Typography>;
     }
 
     const handleChecked = (questionId) => {
         return !!questionsChecked.find(el => el === questionId);
     }
 
+    const randomColor = () => {
+        const colors = ['#824EDC', '#ECF8CC', '#ED6BE8', '#D0FA66', '#ABDFF7'];
+        return colors[Math.floor(Math.random() * colors.length)];
+    }
+
     return (
         <>
             <Grid container>
                 <Grid item xs={12} lg={12}>
-                    <Typography variant="h5" align="center">
-                        {phrase}
+                    <Typography variant="h5" align="center" style={{ fontFamily: 'Young Serif, serif', color: randomColor(), fontWeight: 500 }}>
+                        <q>{phrase}</q>
                     </Typography>
                 </Grid>
                 <Grid item xs={12} lg={12}>
-                    <FormControl sx={{ m: 3 }} component="fieldset" variant="outlined">
-                        <FormLabel component="legend">Questionario de día #{day || currentDay}</FormLabel>
+                    <FormControl sx={{ m: 1 }} component="fieldset" variant="outlined">
+                        <FormLabel component="legend" sx={{ fontSize: 12 }}>Contesta honestamente lo que si hayas realizado</FormLabel>
                         {currentQuestions.map(question => (
                             <FormGroup key={"question-" + question.id} sx={{ mt: 2 }}>
                                 <FormControlLabel
@@ -183,16 +189,22 @@ function CheckForm({ day }) {
                                 />
                             </FormGroup>
                         ))}
-                        <FormGroup sx={{ mt: 5 }}>
-                            <FormControlLabel
-                                control={
-                                    <Checkbox onChange={handleComplete} defaultChecked={false} name="complete" />
-                                }
-                                label="Contesté de manera honesta"
-                                sx={{ color: "green" }}
-                            />
-                        </FormGroup>
-                        <FormHelperText>La útlima casilla habilita el guardado</FormHelperText>
+                        {
+                            currentQuestions.length >= 1 && (
+                                <>
+                                    <FormGroup sx={{ mt: 5 }}>
+                                        <FormControlLabel
+                                            control={
+                                                <Checkbox onChange={handleComplete} defaultChecked={false} name="complete" />
+                                            }
+                                            label="Contesté de manera honesta"
+                                            sx={{ color: "green" }}
+                                        />
+                                    </FormGroup>
+                                    <FormHelperText>La útlima casilla habilita el guardado</FormHelperText>
+                                </>
+                            )
+                        }
                     </FormControl>
                 </Grid>
                 <Grid item xs={12} lg={12}>

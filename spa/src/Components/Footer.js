@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
-import { Button, Link, Typography } from '@mui/material';
+import { Box, Button, Grid, Link, Typography } from '@mui/material';
 import { AppContext } from '../App';
+import { Facebook as FacebookIcon, Instagram as InstagramIcon, WhatsApp as WhatsAppIcon } from '@mui/icons-material';
 
 function Footer() {
     const { user } = useContext(AppContext)
@@ -16,28 +17,35 @@ function Footer() {
 
     return (
         <>
-            {user.employee_id &&
-                <Typography variant='caption' display="block" color='text.secondary' align='center' sx={{ m: 0 }}>
-                    {`#empleado ${user.employee_id} - `}
-                    <Button size="large" onClick={handleLogout}><Link color="inherit" >{"Cerrar sesión"}</Link></Button>
+            <Box>
+                {user.employee_id &&
+                    <Typography variant='caption' display="block" color='text.secondary' align='center' sx={{ m: 1 }}>
+                        <Button size="small" onClick={handleLogout}><Link color="inherit" >{"Cerrar sesión"}</Link></Button>
+                    </Typography>
+                }
+                <Typography variant='body2' color='text.secondary' align='center' sx={{ mb: 2 }}>
+                    {'Copyright © '}
+                    <img
+                        style={{ maxHeight: 30, borderRadius: 50, verticalAlign: 'middle', marginRight: 5 }}
+                        alt="sponsor-logo"
+                        src="https://res.cloudinary.com/hammock-software/image/upload/v1695849364/reto-creator_xjqjiq.jpg"
+                    />
+                    <a href="https://medicinafuncionalmty.com" target='_blank' rel="noreferrer">
+                        {'Medicina Funcional MTY'}
+                    </a>&nbsp;
+                    {new Date().getFullYear()}
+                    {'.'}
                 </Typography>
-            }
-            <Typography variant='body2' color='text.secondary' align='center'>
-                {'Copyright © '}
-                <a href="https://medicinafuncionalmty.com" target='_blank' rel="noreferrer">
-                    {'Medicina Funcional MTY'}
-                </a>{' '}
-                {new Date().getFullYear()}
-                {'.'}
-            </Typography>
 
-            <Typography variant="caption" display="block" align='center' gutterBottom sx={{ m: 1, fontSize: 8 }}>
-                {'<Coded> with 🖤 by: '}
-                <Link href="mailto:luis.garcialuna@outlook.com?Subject=Interesado en tus servicios" color="inherit">
-                    {'Iván García'}
-                </Link>
-                {'.'}
-            </Typography>
+                <Typography variant="caption" display="block" align='center' gutterBottom sx={{ m: 1, fontSize: 10 }}>
+                    <code>{'<coded/>'}</code>{' with 🖤 by: '}
+                    <Link href="mailto:luis.garcialuna@outlook.com?Subject=Interesado en tus servicios 🧑🏾‍💻" color="inherit">
+                        {'Iván García'}
+                    </Link>
+                    {' 🧑🏾‍💻 .'}
+                </Typography>
+            </Box>
+
         </>
     );
 }

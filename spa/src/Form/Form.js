@@ -10,6 +10,7 @@ import {
     Box,
     Button,
     Container,
+    Grid,
     Step,
     Stepper,
     StepLabel,
@@ -53,7 +54,7 @@ function Form() {
                     .then(res => res.json())
                     .then(data => {
                         if (data <= 0) {
-                            alert('Regresa el 2023-10-02 para comenzar el reto!');
+                            alert('Regresa el 02 de Octubre para comenzar el reto.\nNos estamos preparando 🥳');
                             return setCurrentDay(0);
                         }
                         setCurrentDay(data);
@@ -137,7 +138,7 @@ function Form() {
     }
 
     const isFinished = () => {
-        return currentDay === 75;
+        return currentDay >= 75;
     }
 
     return (
@@ -145,9 +146,30 @@ function Form() {
             <FormContext.Provider value={{ currentDay, setLoading, handleCompletion, activeStep, setActiveStep, handleFeedback }}>
                 <Container component="main" maxWidth="sm" sx={{ mb: 4 }}>
                     <Paper variant="outlined" sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}>
-                        <Typography component="h1" variant="h4" align="right">
-                            Día #{currentDay}
-                        </Typography>
+                        <Grid container justifyContent="center" alignItems='center'>
+                            <Grid item xs={3}>
+                                <img
+                                    style={{ maxHeight: 50, borderRadius: 50, marginRight: 5 }}
+                                    alt="sponsor-logo"
+                                    src="https://res.cloudinary.com/hammock-software/image/upload/v1695849364/reto-beneficios_rd0qfb.jpg"
+                                />
+                            </Grid>
+                            <Grid item xs={3}>
+                                <img
+                                    style={{ maxHeight: 50, borderRadius: 50, marginRight: 5 }}
+                                    alt="challenge-logo"
+                                    src="https://res.cloudinary.com/hammock-software/image/upload/v1695849364/reto-logo_pxkjkn.jpg"
+                                />
+                            </Grid>
+                            <Grid item xs={6}>
+                                <Typography component="h1" variant="h4" align="right" sx={{ fontWeight: 700, color: '#5EC4CC', fontFamily: 'Paytone One, sans-serif' }}>
+                                    DÍA #{currentDay}
+                                </Typography>
+                            </Grid>
+
+
+
+                        </Grid>
                         {
                             currentDay !== 0 ? (<>
                                 <Stepper activeStep={activeStep.number} sx={{ pt: 3, pb: 5 }}>

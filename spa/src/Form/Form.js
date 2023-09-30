@@ -75,27 +75,35 @@ function Form() {
         setActiveStep({ ...activeStep, completed });
     }
 
-    async function handleFeedback(weight, week) {
+    const handleFeedback = (weight, week) => {
         const formData = new FormData();
-        formData.append("weight", "weight");
-        formData.append("week", "week");
+        formData.append("weight", weight);
+        formData.append("week", week);
         formData.append("employeeId", localStorage.getItem('employeeId'));
-        await fetch('https://www.reto75dias.com.mx/api/methods/post-feedback.php', {
-            method: 'POST',
-            headers,
-            body: formData
-        })
-            .then(res => res.json())
-            .then(data => {
-                if (data?.id) {
-                    handleCompletion(true);
-                }
-            })
-            .catch(() => {
-                alert('Por el momento no podemos crear el avance. \nPor favor, intente más tarde');
-                setLoading(false);
-            });
+        postFeedback(formData);
     }
+
+    const postFeedback = useCallback(
+        debounce(formData => {
+            if (!loading) {
+                setLoading(true);
+                fetch('https://www.reto75dias.com.mx/api/methods/post-feedback.php', {
+                    method: 'POST',
+                    headers,
+                    body: formData
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data?.id) {
+                            alert('Avance registrado');
+                        }
+                    })
+                    .catch(() => {
+                        alert('Por el momento no podemos crear el avance. \nPor favor, intente más tarde');
+                        setLoading(false);
+                    });
+            }
+        }, 200), []);
 
     function getStepContent(step) {
         switch (step.number) {

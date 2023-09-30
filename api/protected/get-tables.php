@@ -2,7 +2,7 @@
 require_once './protect.php';
 session_start();
 $now = time();
-$start = strtotime("2023-07-01"); //TODO: CHANGE THIS to 2023-10-01
+$start = strtotime("2023-10-02"); //TODO: CHANGE THIS to 2023-10-02
 $datediff = $now - $start;
 $day = $datediff / (60 * 60 * 24);
 ?>
@@ -40,6 +40,13 @@ $day = $datediff / (60 * 60 * 24);
         ?>
     </section>
 
+    <section>
+        <h3>Avances</h3>
+        <?php
+        require_once './get-weights.php';
+        ?>
+    </section>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
@@ -50,29 +57,29 @@ $day = $datediff / (60 * 60 * 24);
     <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
     <script>
         $(document).ready(function() {
+            const props = {
+                dom: 'Bfrtip',
+                buttons: [
+                    'columnsToggle',
+                    'columnsVisibility',
+                    'copy',
+                    'csv',
+                    'excel',
+                    'pdf',
+                    'print'
+                ]
+            }
             $('#questions').DataTable({
-                dom: 'Bfrtip',
-                buttons: [
-                    'copy', 'csv', 'excel', 'pdf', 'print'
-                ]
+                ...props
             });
-        });
-
-        $(document).ready(function() {
             $('#employees').DataTable({
-                dom: 'Bfrtip',
-                buttons: [
-                    'copy', 'csv', 'excel', 'pdf', 'print'
-                ]
+                ...props
             });
-        });
-
-        $(document).ready(function() {
             $('#entries').DataTable({
-                dom: 'Bfrtip',
-                buttons: [
-                    'copy', 'csv', 'excel', 'pdf', 'print'
-                ]
+                ...props
+            });
+            $('#weights').DataTable({
+                ...props
             });
         });
     </script>

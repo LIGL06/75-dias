@@ -26,20 +26,18 @@ function HistoryForm() {
         }
     }, [applies])
 
-    useEffect(() => {
-        if (form?.weight) {
-            verify(form.weight);
-        }
-    }, [form])
-
     const verify = useCallback(
         debounce(weight => {
             const week = currentDay / 7;
-            console.log({ weight, week });
             if (week >= 1) {
                 handleFeedback(weight, week);
             }
-        }, 200), []);
+        }, 1000), []);
+
+    const handleChange = e => {
+        setForm({ ...form, weight: e.target.value });
+        verify(e.target.value);
+    }
 
     function renderWeight() {
         return (<>
@@ -70,7 +68,8 @@ function HistoryForm() {
                     inputProps={{
                         step: 0.05,
                         min: 10,
-                        max: 150
+                        max: 150,
+                        inputMode: 'numeric',
                     }}
                     InputProps={{
                         startAdornment: (
@@ -79,7 +78,7 @@ function HistoryForm() {
                             </InputAdornment>
                         ),
                     }}
-                    onChange={e => setForm({ ...form, weight: e.target.value })}
+                    onChange={handleChange}
                     error={!(form.weight >= 10.00 && form.weight <= 150.00)}
                     disabled={!applies}
                     variant='standard'

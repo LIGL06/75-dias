@@ -16,6 +16,7 @@ $employees = R::findAll('users');
             <th>identidad</th>
             <th>teléfono</th>
             <th>peso inicial</th>
+            <th>sindicalizado</th>
         </tr>
     </thead>
     <tbody>
@@ -32,6 +33,7 @@ $employees = R::findAll('users');
                 <td>$value->identity</td>
                 <td>$value->phone</td>
                 <td>$value->weight</td>
+                <td>$value->sindicalized</td>
             </tr>
             ";
         }
@@ -48,6 +50,7 @@ $employees = R::findAll('users');
             <th>identidad</th>
             <th>teléfono</th>
             <th>peso inicial</th>
+            <th>sindicalizado</th>
         </tr>
     </tfoot>
 </table>

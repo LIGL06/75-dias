@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import {
     Grid,
     Typography,
@@ -10,61 +10,27 @@ import {
     FormHelperText,
     Checkbox
 } from '@mui/material';
+import debounce from 'lodash.debounce';
 import { headers } from '../constants/constants';
 import { AppContext } from '../App';
 import { FormContext } from './Form';
 
-function CheckForm({ day, title = 'hoy' }) {
+function CheckForm({ day }) {
 
     const [phrase, setPhrase] = useState('');
     const [currentQuestions, setCurrentQuestions] = useState([]);
     const [questionsChecked, setQuestionsChecked] = useState([]);
     const [sent, setSent] = useState(false);
-    const { currentDay, setLoading, handleCompletion } = useContext(FormContext)
+    const { currentDay, setLoading, handleCompletion, loading } = useContext(FormContext)
     const { user } = useContext(AppContext);
 
 
     useEffect(() => {
-        // TODO: CHECK FOR VISITED
-        setLoading(true);
-
-        fetch('https://www.reto75dias.com.mx/api/methods/get-questions.php', {
-            method: 'GET',
-            headers,
-        })
-            .then(res => res.json())
-            .then(data => {
-                const questions = [];
-                const answered = [];
-                for (const [, value] of Object.entries(data)) {
-                    questions.push(value)
-                    answered.push({ [value.id]: false })
-                }
-                setCurrentQuestions(questions);
-                setQuestionsChecked(answered);
-                setLoading(false);
-            })
-            .catch(() => {
-                alert(`Por el momento no podemos obenter tus registro del día ${day || currentDay}. \nPor favor, intente más tarde`)
-                setLoading(false);
-            }); // TODO: REMOVE THIS
-        fetch('https://www.reto75dias.com.mx/api/methods/get-day-phrase.php?' + new URLSearchParams({
-            day: day || currentDay
-        }), {
-            method: 'GET',
-            headers,
-        })
-            .then(res => res.json())
-            .then(data => {
-                setPhrase(data?.content);
-                setLoading(false);
-            })
-            .catch(() => {
-                alert(`Por el momento no podemos obenter la frase del día ${day || currentDay}. \nPor favor, intente más tarde`)
-                setLoading(false);
-            }); // TODO: REMOVE THIS
-
-    }, [])
+        if (!loading) {
+            getQuestions();
+            getDayPhrase();
+        }
+    }, []);
 
     useEffect(() => {
         if (currentQuestions.length) {
@@ -90,7 +56,7 @@ function CheckForm({ day, title = 'hoy' }) {
                 .catch(() => {
                     alert('Por el momento no podemos obenter tus registro de hoy. \nPor favor, intente más tarde')
                     setLoading(false);
-                });  // TODO: REMOVE THIS
+                });
         }
     }, [currentQuestions])
 
@@ -103,28 +69,54 @@ function CheckForm({ day, title = 'hoy' }) {
         }
     }
 
-    const handleFeedback = async (weight, week) => {
-        if ((weight && week) && !sent) {
-            const formData = new FormData();
-            formData.append('employeeId', user.employee_id);
-            formData.append('weight', weight);
-            formData.append('week', week);
-            setLoading(true);
-            await fetch('https://www.reto75dias.com.mx/api/methods/post-form.php', {
-                method: 'POST',
-                headers,
-                body: formData
-            })
-                .then(res => res.json())
-                .then(data => { console.log({ data }); setLoading(false); setSent(true); })
-                .catch(() => {
-                    setSent(true);
-                    setLoading(false);
-                    // Emulate success
-                }); // TODO: REMOVE THIS
-        }
-        handleCompletion(true);
-    }
+    const getQuestions = useCallback(
+        debounce(() => {
+            if (!loading) {
+                setLoading(true);
+                fetch('https://www.reto75dias.com.mx/api/methods/get-questions.php', {
+                    method: 'GET',
+                    headers,
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        const questions = [];
+                        const answered = [];
+                        for (const [, value] of Object.entries(data)) {
+                            questions.push(value)
+                            answered.push({ [value.id]: false })
+                        }
+                        setCurrentQuestions(questions);
+                        setQuestionsChecked(answered);
+                        setLoading(false);
+                    })
+                    .catch(() => {
+                        alert(`Por el momento no podemos obenter tus registro del día ${day || currentDay}. \nPor favor, intente más tarde`)
+                        setLoading(false);
+                    });
+            }
+        }, 200), []);
+
+    const getDayPhrase = useCallback(
+        debounce(() => {
+            if (!loading) {
+                setLoading(true);
+                fetch('https://www.reto75dias.com.mx/api/methods/get-day-phrase.php?' + new URLSearchParams({
+                    day: day || currentDay
+                }), {
+                    method: 'GET',
+                    headers,
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        setPhrase(data?.content);
+                        setLoading(false);
+                    })
+                    .catch(() => {
+                        alert(`Por el momento no podemos obenter la frase del día ${day || currentDay}. \nPor favor, intente más tarde`)
+                        setLoading(false);
+                    });
+            }
+        }, 200), []);
 
     const handleComplete = async (e) => {
         if (e.target.checked && !sent) {
@@ -143,12 +135,14 @@ function CheckForm({ day, title = 'hoy' }) {
                 body: formData
             })
                 .then(res => res.json())
-                .then(data => { console.log({ data }); setLoading(false); setSent(true); })
+                .then(data => {
+                    setLoading(false);
+                    setSent(true);
+                })
                 .catch(() => {
                     setSent(true);
                     setLoading(false);
-                    // Emulate success
-                }); // TODO: REMOVE THIS
+                });
         }
         handleCompletion(e.target.checked);
     }

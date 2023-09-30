@@ -24,7 +24,8 @@ try {
         echo json_encode($result);
         exit;
     } else {
-        header("HTTP/1.1 401 Unauthorized");
+        $data = array("data" => []);
+        echo json_encode($data);
         exit;
     }
 } catch (PDOException $e) {

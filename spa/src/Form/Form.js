@@ -1,13 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {
     createContext,
+    useCallback,
     useEffect,
     useState
 } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-    Alert,
-    AlertTitle,
     Box,
     Button,
     Container,
@@ -17,16 +16,16 @@ import {
     Paper,
     Typography,
 } from '@mui/material';
+import debounce from 'lodash.debounce';
 import PreviousForm from './PreviousForm';
 import CheckForm from './CheckForm';
 import HistoryForm from './HistoryForm';
 import FinishedForm from './FinishedForm';
 import { headers } from '../constants/constants';
-import data from '../mocks/mockedData'; // TODO: REMOVE THIS
 
 const oGSteps = ['Pendientes', 'Actual', 'Avance'];
 
-export const FormContext = createContext({ currentDay: 0, setLoading: () => { }, handleCompletion: () => { }, activeStep: {}, setActiveStep: () => { } })
+export const FormContext = createContext({ currentDay: 0, setLoading: () => { }, handleCompletion: () => { }, activeStep: {}, setActiveStep: () => { }, handleFeedback: () => { } })
 
 function Form() {
 
@@ -35,22 +34,30 @@ function Form() {
     const [steps,] = useState(oGSteps);
     const [currentDay, setCurrentDay] = useState(0);
     const [loading, setLoading] = useState(false);
-    const [successAlert, setSuccessAlert] = useState(false);
 
     useEffect(() => {
         const employeeId = localStorage.getItem('employeeId');
         if (!employeeId) {
             history('/signin');
         }
-        setLoading(true);
-        fetch('https://www.reto75dias.com.mx/api/methods/get-current-day.php', {
-            method: 'GET',
-            headers,
-        })
-            .then(res => res.json())
-            .then(data => { setCurrentDay(data); setLoading(false); })
-            .catch(() => { setCurrentDay(data.mockedCurrentDay); setLoading(false); }); // TODO: REMOVE THIS
+        getCurrentDay();
     }, [])
+
+    const getCurrentDay = useCallback(
+        debounce(() => {
+            if (!loading) {
+                fetch('https://www.reto75dias.com.mx/api/methods/get-current-day.php', {
+                    method: 'GET',
+                    headers,
+                })
+                    .then(res => res.json())
+                    .then(data => { setCurrentDay(data); setLoading(false); })
+                    .catch(() => {
+                        alert('Por el momento no podemos obtener el día actual. \nPor favor, intente más tarde');
+                        setLoading(false);
+                    });
+            }
+        }, 100), []);
 
     const handleNext = () => {
         if (activeStep.completed) {
@@ -65,8 +72,29 @@ function Form() {
     };
 
     const handleCompletion = (completed) => {
-        setSuccessAlert(true);
         setActiveStep({ ...activeStep, completed });
+    }
+
+    async function handleFeedback(weight, week) {
+        const formData = new FormData();
+        formData.append("weight", "weight");
+        formData.append("week", "week");
+        formData.append("employeeId", localStorage.getItem('employeeId'));
+        await fetch('https://www.reto75dias.com.mx/api/methods/post-feedback.php', {
+            method: 'POST',
+            headers,
+            body: formData
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data?.id) {
+                    handleCompletion(true);
+                }
+            })
+            .catch(() => {
+                alert('Por el momento no podemos crear el avance. \nPor favor, intente más tarde');
+                setLoading(false);
+            });
     }
 
     function getStepContent(step) {
@@ -90,20 +118,13 @@ function Form() {
         return activeStep === steps.length - 1 ? 'Completar' : 'Siguiente';
     }
 
-    const renderSuccessAlert = () => {
-        return <Alert severity="success">
-            <AlertTitle>Success</AlertTitle>
-            This is a success alert — <strong>check it out!</strong>
-        </Alert>;
-    }
-
     const isFinished = () => {
         return currentDay === 75;
     }
 
     return (
         <>
-            <FormContext.Provider value={{ currentDay, setLoading, handleCompletion, activeStep, setActiveStep }}>
+            <FormContext.Provider value={{ currentDay, setLoading, handleCompletion, activeStep, setActiveStep, handleFeedback }}>
                 <Container component="main" maxWidth="sm" sx={{ mb: 4 }}>
                     <Paper variant="outlined" sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}>
                         <Typography component="h1" variant="h4" align="right">

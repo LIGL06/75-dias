@@ -29,19 +29,20 @@ import {
 } from '@mui/icons-material';
 import { AppContext } from '../App';
 import { headers, locations, identities } from '../constants/constants';
-import data from '../mocks/mockedData'; // TODO: REMOVE THIS
+import Loader from '../Components/Loader';
 
 export default function SignUp() {
   const history = useNavigate();
   const [form, setForm] = useState({});
   const [valid, setValid] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { setUser } = useContext(AppContext)
 
   useEffect(() => {
     const isValid = !!((form.age && form.email) &&
       (form.employeeId && form.fullName) &&
       (form.height && form.identity) &&
-      (form.phone && form.weigth));
+      (form.phone && form.weight));
     setValid(isValid)
   }, [form])
 
@@ -55,6 +56,7 @@ export default function SignUp() {
   };
 
   const handlePost = async (formData) => {
+    setLoading(true);
     await fetch('https://www.reto75dias.com.mx/api/methods/post-signup.php', {
       method: 'POST',
       headers,
@@ -70,11 +72,9 @@ export default function SignUp() {
         }
       })
       .catch(() => {
-        setUser(data.mockedUser);
-        localStorage.setItem('user', JSON.stringify(data.mockedUser))
-        localStorage.setItem('employeeId', data.mockedUser.employee_id)
-        history('/dashboard');
-      }); //TODO: REMOVE THIS
+        alert('Por el momento no podemos crear el registro. \nPor favor, intente más tarde');
+        setLoading(false);
+      });
   }
 
   return (
@@ -271,7 +271,7 @@ export default function SignUp() {
                 required
                 fullWidth
                 type='number'
-                id='weigth'
+                id='weight'
                 label='Peso (kgs)'
                 defaultValue={10}
                 inputProps={{
@@ -286,8 +286,8 @@ export default function SignUp() {
                     </InputAdornment>
                   ),
                 }}
-                onChange={e => setForm({ ...form, weigth: e.target.value })}
-                error={!(form.weigth >= 10.00 && form.weigth <= 150.00)}
+                onChange={e => setForm({ ...form, weight: e.target.value })}
+                error={!(form.weight >= 10.00 && form.weight <= 150.00)}
                 variant='standard'
               />
             </Grid>
@@ -306,13 +306,15 @@ export default function SignUp() {
           <Grid container spacing={2} justifyContent='end' alignItems='center'>
             <Grid item>
               <Button
-                type='submit'
-                variant='contained'
-                endIcon={<SendIcon />}
+                type="submit"
+                fullWidth
+                variant="contained"
                 sx={{ mt: 3, mb: 2 }}
+                startIcon={loading ? <Loader /> : null}
+                endIcon={!loading ? <SendIcon /> : null}
                 disabled={!valid}
               >
-                Enviar
+                {loading ? 'Registrando' : 'Registrar'}
               </Button>
             </Grid>
           </Grid>

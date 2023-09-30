@@ -4,7 +4,6 @@ import { Avatar, Box, Button, CardContent, CardActions, Grid, TextField, Typogra
 import { Login, Send as SendIcon } from '@mui/icons-material';
 import { headers } from '../constants/constants';
 import { AppContext } from '../App';
-import data from '../mocks/mockedData'; // TODO: REMOVE THIS
 import Loader from '../Components/Loader';
 
 export default function SignIn() {
@@ -39,6 +38,7 @@ export default function SignIn() {
         }
       })
       .catch(() => {
+        alert('Credenciales inválidas')
         setLoading(false)
         setError(true);
       });
@@ -68,6 +68,7 @@ export default function SignIn() {
             name="employeeId"
             autoComplete="employeeId"
             onChange={handleInputChange}
+            inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
             error={error || employeeId === ''}
           />
           <Button

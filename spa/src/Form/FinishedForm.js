@@ -7,8 +7,6 @@ import {
 
 export default function FinishedForm({ isFinished }) {
 
-    console.log({ isFinished })
-
     return (
         <>
             <Grid container>

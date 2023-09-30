@@ -36,7 +36,7 @@ export default function App() {
                         }}
                     >
                         <CssBaseline />
-                        <Container maxWidth="lg">
+                        <Container maxWidth="lg" sx={{ m: 'auto' }}>
                             <Card>
                                 <RouterProvider router={router} />
                             </Card>

@@ -1,35 +1,40 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Box, CardContent, CardActions, CardMedia, Typography, Unstable_Grid2 as Grid } from '@mui/material';
+import { CardContent, CardActions, CardMedia, Typography } from '@mui/material';
 import LandingActions from './LandingActions';
-
-const bull = (
-  <Box
-    component='span'
-    sx={{ display: 'inline-block', mx: '2px', transform: 'scale(0.8)' }}
-  >
-    •
-  </Box>
-);
+import { headers } from '../constants/constants';
+import Loader from '../Components/Loader';
 
 export default function BasicCard() {
   const history = useNavigate();
+  const [loading, setLoading] = useState(true);
+  const [phrase, setPhrase] = useState('');
 
   useEffect(() => {
     const employeeId = localStorage.getItem('employeeId');
     if (employeeId) {
       history('/dashboard');
     }
+    fetch('https://www.reto75dias.com.mx/api/methods/get-day-phrase.php?' + new URLSearchParams({
+      day: Math.floor(Math.random() * 74) + 1,
+    }), {
+      method: 'GET',
+      headers,
+    })
+      .then(res => res.json())
+      .then(data => {
+        setPhrase(data?.content);
+        setLoading(false);
+      })
+      .catch(() => {
+        alert('Por el momento no podemos obenter una frase. \n Por favor, intente más tarde');
+        setLoading(false);
+      });
   }, [])
 
-  const item = {
-    img: 'https://res.cloudinary.com/hammock-software/image/upload/v1695849364/reto-beneficios_rd0qfb.jpg',
-    title: 'beneficios-logo'
-  };
-
   return (
-    <>
+    <div sx={{ mt: 10 }}>
       <CardMedia
         component="img"
         alt="logo-reto"
@@ -37,20 +42,20 @@ export default function BasicCard() {
         image="https://res.cloudinary.com/hammock-software/image/upload/v1695849364/reto-logo_pxkjkn.jpg"
       />
       <CardContent>
-        <Typography variant='h4' align='center' gutterBottom>
+        <Typography variant='h4' align='center' gutterBottom sx={{ mb: 5 }}>
           BIENVENIDOS
         </Typography>
         <Typography variant='h4' align='center' gutterBottom>
           RETO 75 DÍAS
         </Typography>
         <Typography variant='body2' align='center' color='text.secondary' gutterBottom>
-          Con este reto vas a notar una sensación de bienestar general en todo tu cuerpo
+          {phrase}
         </Typography>
         <br />
       </CardContent>
       <CardActions>
         <LandingActions />
       </CardActions>
-    </>
+    </div>
   );
 }

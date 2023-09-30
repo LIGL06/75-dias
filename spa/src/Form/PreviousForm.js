@@ -1,10 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { Grid, Typography } from '@mui/material'
 import CheckForm from './CheckForm';
 import { headers } from '../constants/constants';
 import { FormContext } from './Form';
-import data from '../mocks/mockedData'; // TODO: REMOVE THIS
+import debounce from 'lodash.debounce';
 
 const employeeId = localStorage.getItem('employeeId');
 
@@ -15,33 +15,39 @@ function PreviousForm() {
     const [completionArray,] = useState([]);
     const [, setFromYy] = useState(false);
     const [, setFromPYy] = useState(false);
-    const { currentDay, setLoading, handleCompletion } = useContext(FormContext);
+    const { currentDay, setLoading, handleCompletion, loading } = useContext(FormContext);
 
     useEffect(() => {
         // TODO: CHECK FOR VISITED & REFILL
         setLoading(true);
-        fetch('https://www.reto75dias.com.mx/api/methods/get-employee-entries.php?' + new URLSearchParams({
-            employeeId
-        }), {
-            method: 'GET',
-            headers,
-        })
-            .then(res => res.json())
-            .then(data => {
-                if (currentDay === 1) {
-                    console.log('Current DAY is 1!!')
-                    setLoading(false);
-                    setPendingEntries(0);
-                    return;
-                }
-                setEntries(data);
-                setLoading(false);
-            })
-            .catch(() => {
-                alert('Por el momento no podemos obenter tus registros previos \n Por favor, intente más tarde');
-                setLoading(false);
-            });  // TODO: REMOVE THIS
-    }, [])
+        getEmployeeEntries();
+    }, []);
+
+    const getEmployeeEntries = useCallback(
+        debounce(() => {
+            if (!loading) {
+                fetch('https://www.reto75dias.com.mx/api/methods/get-employee-entries.php?' + new URLSearchParams({
+                    employeeId
+                }), {
+                    method: 'GET',
+                    headers,
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (currentDay === 1) {
+                            setLoading(false);
+                            setPendingEntries(0);
+                            return;
+                        }
+                        setEntries(data);
+                        setLoading(false);
+                    })
+                    .catch(() => {
+                        alert('Por el momento no podemos obenter tus registros previos. \nPor favor, intente más tarde');
+                        setLoading(false);
+                    });  // TODO: REMOVE THIS
+            }
+        }, 100), []);
 
     useEffect(() => {
         if (pendingEntries === 0 || currentDay === 1) {

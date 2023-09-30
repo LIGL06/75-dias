@@ -13,7 +13,6 @@ import {
 import { headers } from '../constants/constants';
 import { AppContext } from '../App';
 import { FormContext } from './Form';
-import data from '../mocks/mockedData'; // TODO: REMOVE THIS
 
 function CheckForm({ day, title = 'hoy' }) {
 
@@ -46,14 +45,7 @@ function CheckForm({ day, title = 'hoy' }) {
                 setLoading(false);
             })
             .catch(() => {
-                const questions = [];
-                const answered = [];
-                for (const [, value] of Object.entries(data.mockedQuestions)) {
-                    questions.push(value)
-                    answered.push({ [value.id]: false })
-                }
-                setCurrentQuestions(questions);
-                setQuestionsChecked(answered);
+                alert(`Por el momento no podemos obenter tus registro del día ${day || currentDay}. \nPor favor, intente más tarde`)
                 setLoading(false);
             }); // TODO: REMOVE THIS
         fetch('https://www.reto75dias.com.mx/api/methods/get-day-phrase.php?' + new URLSearchParams({
@@ -68,7 +60,7 @@ function CheckForm({ day, title = 'hoy' }) {
                 setLoading(false);
             })
             .catch(() => {
-                setPhrase('This is a phrase!')
+                alert(`Por el momento no podemos obenter la frase del día ${day || currentDay}. \nPor favor, intente más tarde`)
                 setLoading(false);
             }); // TODO: REMOVE THIS
 
@@ -96,14 +88,7 @@ function CheckForm({ day, title = 'hoy' }) {
                     setLoading(false);
                 })
                 .catch(() => {
-                    const questions = [];
-                    for (const [, value] of Object.entries(data.mockedDayEntries)) {
-                        const question = currentQuestions.find(element => element.id === value.question_id);
-                        if (question) {
-                            questions.push(question.id);
-                        }
-                    }
-                    setQuestionsChecked(questions);
+                    alert('Por el momento no podemos obenter tus registro de hoy. \nPor favor, intente más tarde')
                     setLoading(false);
                 });  // TODO: REMOVE THIS
         }
@@ -116,6 +101,29 @@ function CheckForm({ day, title = 'hoy' }) {
             const elements = questionsChecked.filter(el => el !== e.target.name);
             setQuestionsChecked(elements);
         }
+    }
+
+    const handleFeedback = async (weight, week) => {
+        if ((weight && week) && !sent) {
+            const formData = new FormData();
+            formData.append('employeeId', user.employee_id);
+            formData.append('weight', weight);
+            formData.append('week', week);
+            setLoading(true);
+            await fetch('https://www.reto75dias.com.mx/api/methods/post-form.php', {
+                method: 'POST',
+                headers,
+                body: formData
+            })
+                .then(res => res.json())
+                .then(data => { console.log({ data }); setLoading(false); setSent(true); })
+                .catch(() => {
+                    setSent(true);
+                    setLoading(false);
+                    // Emulate success
+                }); // TODO: REMOVE THIS
+        }
+        handleCompletion(true);
     }
 
     const handleComplete = async (e) => {

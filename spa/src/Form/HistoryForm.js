@@ -1,17 +1,18 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import {
     Checkbox, FormGroup, FormControlLabel,
     FormLabel, Grid, Typography, TextField,
     InputAdornment
 } from '@mui/material';
 import { Scale as ScaleIcon } from '@mui/icons-material';
+import debounce from 'lodash.debounce';
 import { FormContext } from './Form';
 
 function HistoryForm() {
     const [applies, setApplies] = useState(true);
     const [form, setForm] = useState({});
-    const { handleCompletion, currentDay } = useContext(FormContext);
+    const { handleCompletion, currentDay, handleFeedback } = useContext(FormContext);
 
     useEffect(() => {
         if (currentDay % 7 !== 0) {
@@ -24,6 +25,21 @@ function HistoryForm() {
             handleCompletion(true);
         }
     }, [applies])
+
+    useEffect(() => {
+        if (form?.weight) {
+            verify(form.weight);
+        }
+    }, [form])
+
+    const verify = useCallback(
+        debounce(weight => {
+            const week = currentDay / 7;
+            console.log({ weight, week });
+            if (week >= 1) {
+                handleFeedback(weight, week);
+            }
+        }, 200), []);
 
     function renderWeight() {
         return (<>
@@ -48,7 +64,7 @@ function HistoryForm() {
                     required
                     fullWidth
                     type='number'
-                    id='weigth'
+                    id='weight'
                     label='Peso (kgs)'
                     defaultValue={10}
                     inputProps={{
@@ -63,8 +79,8 @@ function HistoryForm() {
                             </InputAdornment>
                         ),
                     }}
-                    onChange={e => setForm({ ...form, weigth: e.target.value })}
-                    error={!(form.weigth >= 10.00 && form.weigth <= 150.00)}
+                    onChange={e => setForm({ ...form, weight: e.target.value })}
+                    error={!(form.weight >= 10.00 && form.weight <= 150.00)}
                     disabled={!applies}
                     variant='standard'
                 />

@@ -51,9 +51,15 @@ function Form() {
                     headers,
                 })
                     .then(res => res.json())
-                    .then(data => { setCurrentDay(data); setLoading(false); })
+                    .then(data => {
+                        if (data <= 0) {
+                            alert('Regresa el 2023-10-02 para comenzar el reto!');
+                            return setCurrentDay(0);
+                        }
+                        setCurrentDay(data);
+                        setLoading(false);
+                    })
                     .catch(() => {
-                        setCurrentDay(7);
                         alert('Por el momento no podemos obtener el día actual. \nPor favor, intente más tarde');
                         setLoading(false);
                     });
@@ -142,31 +148,35 @@ function Form() {
                         <Typography component="h1" variant="h4" align="right">
                             Día #{currentDay}
                         </Typography>
-                        <Stepper activeStep={activeStep.number} sx={{ pt: 3, pb: 5 }}>
-                            {steps.map((label) => (
-                                <Step key={label}>
-                                    <StepLabel>{label}</StepLabel>
-                                </Step>
-                            ))}
-                        </Stepper>
+                        {
+                            currentDay !== 0 ? (<>
+                                <Stepper activeStep={activeStep.number} sx={{ pt: 3, pb: 5 }}>
+                                    {steps.map((label) => (
+                                        <Step key={label}>
+                                            <StepLabel>{label}</StepLabel>
+                                        </Step>
+                                    ))}
+                                </Stepper>
 
-                        {getStepContent(activeStep)}
-                        <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                            {activeStep.number !== 0 && (
-                                <Button onClick={handleBack} sx={{ mt: 3, ml: 1 }}>
-                                    Back
-                                </Button>
-                            )}
+                                {getStepContent(activeStep)}
+                                <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                                    {activeStep.number !== 0 && (
+                                        <Button onClick={handleBack} sx={{ mt: 3, ml: 1 }}>
+                                            Back
+                                        </Button>
+                                    )}
 
-                            <Button
-                                variant="contained"
-                                onClick={handleNext}
-                                sx={{ mt: 3, ml: 1 }}
-                                disabled={!activeStep.completed || loading}
-                            >
-                                {handleButtonText()}
-                            </Button>
-                        </Box>
+                                    <Button
+                                        variant="contained"
+                                        onClick={handleNext}
+                                        sx={{ mt: 3, ml: 1 }}
+                                        disabled={!activeStep.completed || loading}
+                                    >
+                                        {handleButtonText()}
+                                    </Button>
+                                </Box>
+                            </>) : null
+                        }
 
                     </Paper>
                 </Container>

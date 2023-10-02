@@ -9,10 +9,10 @@ export default function FinishedForm({ isFinished }) {
 
     return (
         <>
-            <Grid container>
-                <Grid item xs>
+            <Grid container justifyContent="center" alignContent="center" >
+                <Grid xs={12} lg={12}>
                     {isFinished ? (<>
-                        <Typography variant="h5" align="center">
+                        <Typography vcomponent="h1" variant="h4" align="center" sx={{ fontWeight: 700, color: '#5EC4CC', fontFamily: 'Young Serif, serif' }}>
                             Gracias por tu registro
                         </Typography>
                         <Typography variant="subtitle1">
@@ -21,23 +21,27 @@ export default function FinishedForm({ isFinished }) {
                         <CardMedia
                             component="img"
                             alt="logo-reto"
-                            height="200"
                             image="https://res.cloudinary.com/hammock-software/image/upload/v1696017048/image_processing20200923-25801-ap32wl_a3xs1e.gif"
+                            sx={{
+                                maxHeight: 400,
+                            }}
                         />
                     </>) : (
                         <>
-                            <Typography variant="h5" align="center">
+                            <Typography vcomponent="h1" variant="h4" align="center" sx={{ fontWeight: 700, color: '#5EC4CC', fontFamily: 'Young Serif, serif' }}>
                                 Gracias por tu registro
                             </Typography>
-                            <Typography variant="caption" >
+                            <Typography variant="subtitle1" >
                                 Mañana será un día nuevo.<br />
                                 ¡No olvides registrar tu progreso!
                             </Typography>
                             <CardMedia
                                 component="img"
                                 alt="logo-reto"
-                                height="200"
                                 image="https://res.cloudinary.com/hammock-software/image/upload/v1696015255/celebration_jbzch9.gif"
+                                sx={{
+                                    maxHeight: 400,
+                                }}
                             />
                         </>
                     )}

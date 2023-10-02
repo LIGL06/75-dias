@@ -113,6 +113,7 @@ function CheckForm({ day }) {
                         setLoading(false);
                     })
                     .catch(() => {
+                        setPhrase('Hakuna Matata');
                         alert(`Por el momento no podemos obenter la frase del día ${day || currentDay}. \nPor favor, intente más tarde`)
                         setLoading(false);
                     });
@@ -157,7 +158,7 @@ function CheckForm({ day }) {
     }
 
     const randomColor = () => {
-        const colors = ['#824EDC', '#ECF8CC', '#ED6BE8', '#D0FA66', '#ABDFF7'];
+        const colors = ['#824EDC', '#ED6BE8', '#D0FA66', '#ABDFF7'];
         return colors[Math.floor(Math.random() * colors.length)];
     }
 
@@ -165,13 +166,13 @@ function CheckForm({ day }) {
         <>
             <Grid container>
                 <Grid item xs={12} lg={12}>
-                    <Typography variant="h5" align="center" style={{ fontFamily: 'Young Serif, serif', color: randomColor(), fontWeight: 500 }}>
+                    <Typography vcomponent="h1" variant="h4" align="center" sx={{ fontWeight: 700, color: randomColor(), fontFamily: 'Young Serif, serif', fontStyle: 'italic' }}>
                         <q>{phrase}</q>
                     </Typography>
                 </Grid>
                 <Grid item xs={12} lg={12}>
                     <FormControl sx={{ m: 1 }} component="fieldset" variant="outlined">
-                        <FormLabel component="legend" sx={{ fontSize: 12 }}>Contesta honestamente lo que si hayas realizado</FormLabel>
+                        <FormLabel component="legend" sx={{ fontSize: 12 }}>Contesta honestamente lo que sí hayas realizado</FormLabel>
                         {currentQuestions.map(question => (
                             <FormGroup key={"question-" + question.id} sx={{ mt: 2 }}>
                                 <FormControlLabel

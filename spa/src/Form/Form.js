@@ -61,6 +61,7 @@ function Form() {
                         setLoading(false);
                     })
                     .catch(() => {
+                        setCurrentDay(7);
                         alert('Por el momento no podemos obtener el día actual. \nPor favor, intente más tarde');
                         setLoading(false);
                     });
@@ -151,14 +152,14 @@ function Form() {
                                 <img
                                     style={{ maxHeight: 50, borderRadius: 50, marginRight: 5 }}
                                     alt="sponsor-logo"
-                                    src="https://res.cloudinary.com/hammock-software/image/upload/v1695849364/reto-beneficios_rd0qfb.jpg"
+                                    src="https://res.cloudinary.com/hammock-software/image/upload/v1696186445/PHOTO-2023-09-30-18-27-41_dqtobz.jpg"
                                 />
                             </Grid>
                             <Grid item xs={3}>
                                 <img
                                     style={{ maxHeight: 50, borderRadius: 50, marginRight: 5 }}
                                     alt="challenge-logo"
-                                    src="https://res.cloudinary.com/hammock-software/image/upload/v1695849364/reto-logo_pxkjkn.jpg"
+                                    src="https://res.cloudinary.com/hammock-software/image/upload/v1696186445/PHOTO-2023-09-30-18-28-05_k1l5mg.jpg"
                                 />
                             </Grid>
                             <Grid item xs={6}>

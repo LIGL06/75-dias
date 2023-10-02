@@ -14,11 +14,15 @@ export const identities = [
         label: "Hombre",
     },
     {
-        value: "Binario",
-        label: "Binario",
+        value: "No binario",
+        label: "No binario",
     },
 ]
 export const locations = [
+    {
+        value: "Otra",
+        label: "Otra",
+    },
     {
         value: "Aceria Celaya",
         label: "Aceria Celaya",

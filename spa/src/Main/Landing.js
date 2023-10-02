@@ -35,15 +35,17 @@ export default function BasicCard() {
   const randomColor = () => {
     const colors = ['#824EDC', '#ECF8CC', '#ED6BE8', '#D0FA66', '#ABDFF7'];
     return colors[Math.floor(Math.random() * colors.length)];
-}
+  }
 
   return (
     <>
       <CardMedia
         component="img"
         alt="logo-reto"
-        height="100%"
-        image="https://res.cloudinary.com/hammock-software/image/upload/v1695849364/reto-logo_pxkjkn.jpg"
+        image="https://res.cloudinary.com/hammock-software/image/upload/v1696186445/PHOTO-2023-09-30-18-28-05_k1l5mg.jpg"
+        sx={{
+          maxHeight: 400,
+        }}
       />
       <CardContent>
         <Typography variant='h4' align='center' gutterBottom sx={{ mb: 2, color: 'orange', fontWeight: 800 }}>
@@ -65,9 +67,9 @@ export default function BasicCard() {
           </Grid>
           <Grid>
             <img
-              style={{ maxHeight: 100 }}
+              style={{ maxHeight: 100, borderRadius: 50 }}
               alt="benefits-logo"
-              src="https://res.cloudinary.com/hammock-software/image/upload/v1695849364/reto-beneficios_rd0qfb.jpg"
+              src="https://res.cloudinary.com/hammock-software/image/upload/v1696186445/PHOTO-2023-09-30-18-27-41_dqtobz.jpg"
             />
           </Grid>
         </Grid>

@@ -1,7 +1,6 @@
 import React, { useContext } from 'react';
 import { Box, Button, Grid, Link, Typography } from '@mui/material';
 import { AppContext } from '../App';
-import { Facebook as FacebookIcon, Instagram as InstagramIcon, WhatsApp as WhatsAppIcon } from '@mui/icons-material';
 
 function Footer() {
     const { user } = useContext(AppContext)
@@ -18,11 +17,20 @@ function Footer() {
     return (
         <>
             <Box>
-                {user.employee_id &&
-                    <Typography variant='caption' display="block" color='text.secondary' align='center' sx={{ m: 1 }}>
-                        <Button size="small" onClick={handleLogout}><Link color="inherit" >{"Cerrar sesión"}</Link></Button>
-                    </Typography>
-                }
+                <Grid container>
+                    <Grid item xs>
+                        <Typography variant='caption' display="block" color='text.secondary' align='center' sx={{ m: 1 }}>
+                            <Button size="small"><Link href="/" color="inherit" >{"Inicio"}</Link></Button>
+                        </Typography>
+                    </Grid>
+                    {user.employee_id &&
+                        <Grid item xs>
+                            <Typography variant='caption' display="block" color='text.secondary' align='center' sx={{ m: 1 }}>
+                                <Button size="small" onClick={handleLogout}><Link color="inherit" >{"Cerrar sesión"}</Link></Button>
+                            </Typography>
+                        </Grid>
+                    }
+                </Grid>
                 <Typography variant='body2' color='text.secondary' align='center' sx={{ mb: 2 }}>
                     {'Copyright © '}
                     <img
